@@ -1,0 +1,43 @@
+{
+  "dataset_root": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\dataset",
+  "dataset_sha256": "598acb16348a29684b1a2a590e6a3984dea13dee260e7494a625095485b7c5c1",
+  "classes": [
+    "Friendly troop",
+    "Enemy troop",
+    "Friendly tower",
+    "Enemy tower",
+    "Card",
+    "Other / unknown"
+  ],
+  "repeated_pixel_frames_within_match": 0,
+  "train": {
+    "matches": [
+      "match-d164a214c52a6b7b"
+    ],
+    "images": 35,
+    "background_images": 0,
+    "boxes_per_class": [
+      32,
+      29,
+      6,
+      6,
+      4,
+      0
+    ]
+  },
+  "val": {
+    "matches": [
+      "match-f381ad78d798fcc8"
+    ],
+    "images": 13,
+    "background_images": 0,
+    "boxes_per_class": [
+      11,
+      28,
+      6,
+      8,
+      20,
+      0
+    ]
+  }
+}

@@ -2,6 +2,5 @@ __pycache__/
 .venv/
 /recordings/
 /dataset/
-/runs/
 /yolo*.pt
 /hud_data/

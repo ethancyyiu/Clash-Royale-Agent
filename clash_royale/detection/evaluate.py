@@ -62,9 +62,11 @@ def main() -> int:
         names = dict(enumerate(classes)) if isinstance(classes, list) else {int(k): v for k, v in classes.items()}
         if model.names != names:
             raise ValueError("Checkpoint class names and IDs differ from the dataset YAML.")
+        args.output.parent.mkdir(parents=True, exist_ok=True)
         settings = {
             "data": str(args.data.resolve()), "device": args.device,
             "imgsz": args.imgsz, "batch": args.batch, "split": "val", "plots": False,
+            "project": str(args.output.resolve().parent), "name": "validation", "exist_ok": True,
         }
         metrics = model.val(**settings)
         report = {

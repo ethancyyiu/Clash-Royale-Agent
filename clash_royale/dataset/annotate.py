@@ -1,4 +1,5 @@
 import argparse
+import json
 import math
 import os
 import sys
@@ -16,7 +17,8 @@ TRACKBAR = "Frame"
 
 
 class Annotator:
-    def __init__(self, video: cv2.VideoCapture, dataset: Dataset, count: int, fps: float):
+    def __init__(self, video: cv2.VideoCapture, dataset: Dataset, count: int, fps: float,
+                 queue: list[int] | None = None):
         self.video = video
         self.dataset = dataset
         self.count = count
@@ -32,6 +34,7 @@ class Annotator:
         self.redraw = True
         self.next_frame_at: float | None = None
         self.message = ""
+        self.queue = queue
 
     def show_frame(self, index: int) -> None:
         index = max(0, min(self.count - 1, index))
@@ -66,7 +69,9 @@ class Annotator:
         self.redraw = True
 
     def reload_boxes(self) -> None:
-        self.boxes = self.dataset.load_boxes(self.index, self.width, self.height)
+        self.boxes, errors = self.dataset.load_boxes(self.index, self.width, self.height)
+        if errors:
+            raise ValueError(f"Invalid labels for frame {self.index}: {'; '.join(errors)}")
         self.selected = None
         self.redrawing = False
         self.dirty = False
@@ -126,7 +131,7 @@ class Annotator:
                 self.next_frame_at = monotonic() + 1 / self.fps
             elif self.dirty:
                 self.message = "Save (S) or revert (R) before playing."
-        elif key in b"adjlpn":
+        elif key in b"adjlpn,.":
             self.next_frame_at = None
             jump = max(1, round(self.fps))
             offsets = {ord("a"): -1, ord("d"): 1, ord("j"): -jump, ord("l"): jump}
@@ -134,10 +139,16 @@ class Annotator:
                 target = self.index + offsets[key]
             elif key == ord("p"):
                 target = max((i for i in self.dataset.saved_frames if i < self.index), default=None)
-            else:
+            elif key == ord("n"):
                 target = min((i for i in self.dataset.saved_frames if i > self.index), default=None)
+            else:
+                choices = self.queue or []
+                if key == ord(","):
+                    target = max((i for i in choices if i < self.index and i not in self.dataset.saved_frames), default=None)
+                else:
+                    target = min((i for i in choices if i > self.index and i not in self.dataset.saved_frames), default=None)
             if target is None:
-                self.message = "No saved frame in that direction."
+                self.message = "No frame in that direction."
             else:
                 self.show_frame(target)
         elif key in b"[]":
@@ -186,7 +197,7 @@ class Annotator:
         lines = [
             f"{state} | Frame {self.index}/{self.count - 1} | {self.timestamp_ns / 1e9:.3f} s | {saved}",
             f"Class {self.active_class}: {active}  ([ / ]) | {len(self.boxes)} boxes",
-            self.message or "Space play/pause | A/D step | P/N saved frames | S save | Q quit",
+            self.message or "Space play/pause | A/D step | P/N saved | ,/. queue | S save | Q quit",
         ]
         for row, line in enumerate(lines):
             cv2.putText(canvas, line, (8, self.view_height + 19 + row * 22),
@@ -205,7 +216,8 @@ class Annotator:
 
     def run(self, review: bool) -> None:
         cv2.createTrackbar(TRACKBAR, WINDOW, 0, max(1, self.count - 1), lambda _position: None)
-        self.show_frame(min(self.dataset.saved_frames, default=0) if review else 0)
+        first = min((i for i in self.queue if i not in self.dataset.saved_frames), default=None) if self.queue else None
+        self.show_frame(first if first is not None else min(self.dataset.saved_frames, default=0) if review else 0)
         cv2.setMouseCallback(WINDOW, self.mouse)
         while True:
             if self.redraw:
@@ -228,6 +240,21 @@ class Annotator:
                     self.next_frame_at = None
 
 
+def load_queue(path: Path, source_id: str, count: int) -> list[int]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise ValueError(f"Could not read review queue {path}: {error}") from error
+    frames = data.get("frames") if isinstance(data, dict) else None
+    if (not isinstance(data, dict) or data.get("version") != 1 or
+            data.get("video_sha256") != source_id or
+            not isinstance(frames, list) or not frames or
+            any(type(frame) is not int or not 0 <= frame < count for frame in frames) or
+            len(set(frames)) != len(frames)):
+        raise ValueError(f"Review queue {path} is invalid or belongs to another video.")
+    return sorted(frames)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Review an MP4 and export YOLO bounding boxes.")
     parser.add_argument("video", type=Path, help="source MP4")
@@ -235,6 +262,7 @@ def main() -> int:
     parser.add_argument("--classes", type=Path, help="text file with one class name per line")
     parser.add_argument("--match", help="group multiple clips from the same match under this ID")
     parser.add_argument("--review", action="store_true", help="start at the first saved frame")
+    parser.add_argument("--queue", type=Path, help="start at a suggested frame and navigate with , and .")
     args = parser.parse_args()
 
     video = cv2.VideoCapture()
@@ -249,10 +277,11 @@ def main() -> int:
             raise ValueError("The MP4 did not report a valid frame rate and frame count.")
 
         dataset = Dataset(args.dataset, args.video, args.classes, args.match)
+        queue = load_queue(args.queue, dataset.source_id, int(count)) if args.queue else None
         print(f"Match {dataset.match} | dataset {dataset.root}", flush=True)
         cv2.namedWindow(WINDOW, cv2.WINDOW_AUTOSIZE)
         window_created = True
-        Annotator(video, dataset, int(count), fps).run(args.review)
+        Annotator(video, dataset, int(count), fps, queue).run(args.review)
     except KeyboardInterrupt:
         return 0
     except (OSError, ValueError, cv2.error) as error:

@@ -70,6 +70,19 @@ Run the same region for several seconds with preview only, then add `--record` t
 
 The annotator uses the same Python environment and dependencies as capture. Open any MP4 from a desktop session. Keep a capture's `.timestamps.csv` next to the video to preserve its monotonic frame timestamps.
 
+### Build a review queue
+
+The current detector was trained from only 48 labelled frames across two matches. Before relying on its predictions, add labels from other matches. Generate a queue that samples the recording every two seconds, skips frames already labelled for that source video, and spreads suggestions across time and visually different scenes:
+
+```sh
+python suggest_frames.py recordings/match03.mp4 --dataset dataset --limit 30
+python annotate.py recordings/match03.mp4 --dataset dataset --queue dataset/queues/match03.json
+python suggest_frames.py recordings/match04.mp4 --dataset dataset --limit 30
+python annotate.py recordings/match04.mp4 --dataset dataset --queue dataset/queues/match04.json
+```
+
+The queue contains frame indices and the source video's SHA-256 digest. The annotator checks the digest before opening it, starts at the first unlabelled suggestion, and uses **,** and **.** for the previous and next unlabelled suggestion. Save the boxes with **S**; the next queue jump then skips that frame. Use `--start-seconds` and `--end-seconds` to restrict a clip, and `--stride-seconds` to adjust how densely candidate frames are scanned. Review every suggested frame and label every visible instance of each class you train. Run `prepare_dataset.py` again after adding labels, keeping whole matches in the validation split, then retrain and evaluate on a separate match. The queue proposes frames for human review; it does not create labels or assess their correctness.
+
 ```sh
 python annotate.py recordings/match01.mp4 --dataset dataset
 python annotate.py recordings/match01.mp4 --dataset dataset --review
@@ -87,6 +100,7 @@ python annotate.py recordings/match01.mp4 --dataset dataset --review
 | **C / X** | Assign the active class to the selected box or delete it |
 | **S / R** | Save the current frame and boxes, or revert to the last saved boxes |
 | **P / N** | Jump to the previous or next saved frame in this video |
+| **, / .** | Jump to the previous or next unlabelled queue suggestion when using `--queue` |
 | **Q / Esc** | Quit |
 
 Save or revert pending edits before navigating. Use **S** on a frame with no boxes to save it as a background image. Reopen the same video with `--review` to go straight to its first saved frame. Saved boxes appear automatically when you visit an exported frame.

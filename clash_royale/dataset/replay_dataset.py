@@ -14,6 +14,19 @@ DEFAULT_CLASSES = [
     "Friendly troop", "Enemy troop", "Friendly tower",
     "Enemy tower", "Card", "Other / unknown",
 ]
+TROOP_CLASSES = ("friendly_troop", "enemy_troop")
+
+
+def training_class_ids(classes: list[str], troop_only: bool) -> list[int]:
+    if not troop_only:
+        return list(range(len(classes)))
+    normalized = ["_".join(name.casefold().split()) for name in classes]
+    ids = []
+    for name in TROOP_CLASSES:
+        if normalized.count(name) != 1:
+            raise ValueError(f"Troop-only mode needs exactly one class named {name} in classes.txt.")
+        ids.append(normalized.index(name))
+    return ids
 
 
 @dataclass(frozen=True)
@@ -32,6 +45,47 @@ class Box:
             (self.bottom - self.top) / height,
         )
         return f"{self.class_id} " + " ".join(f"{value:.10f}" for value in values)
+
+
+def read_boxes(content: bytes, class_count: int, width: int, height: int) -> tuple[list[Box], list[str]]:
+    boxes, errors = [], []
+    try:
+        lines = content.decode("utf-8").splitlines()
+    except UnicodeDecodeError as error:
+        return [], [f"labels must be UTF-8 ({error})"]
+    for line_number, line in enumerate(lines, 1):
+        if not line.strip():
+            continue
+        try:
+            box = parse_box(line, class_count, width, height)
+        except ValueError as error:
+            errors.append(f"line {line_number}: {error}")
+        else:
+            boxes.append(box)
+    return boxes, errors
+
+
+def parse_box(line: str, class_count: int, width: int, height: int) -> Box:
+    try:
+        class_text, *values = line.split()
+        class_id = int(class_text)
+        cx, cy, box_width, box_height = map(float, values)
+    except ValueError as error:
+        raise ValueError("expected class_id x_center y_center width height") from error
+    if not 0 <= class_id < class_count:
+        raise ValueError(f"class ID {class_id} is out of range")
+    if not all(math.isfinite(value) and 0 <= value <= 1 for value in (cx, cy, box_width, box_height)):
+        raise ValueError("coordinates must be finite and normalized to [0, 1]")
+    left, right = cx - box_width / 2, cx + box_width / 2
+    top, bottom = cy - box_height / 2, cy + box_height / 2
+    # Export rounds centers and box sizes independently.
+    tolerance = 1e-9
+    if not (-tolerance <= left < right <= 1 + tolerance and -tolerance <= top < bottom <= 1 + tolerance):
+        raise ValueError("box is empty or extends beyond the image")
+    box = Box(class_id, round(left * width), round(top * height), round(right * width), round(bottom * height))
+    if box.left == box.right or box.top == box.bottom:
+        raise ValueError("box rounds to zero pixels")
+    return box
 
 
 def read_capture_timestamps(video: Path) -> dict[int, int]:
@@ -118,33 +172,11 @@ class Dataset:
     def frame_path(self, index: int, folder: str, suffix: str) -> Path:
         return self.root / folder / self.match / f"{self.prefix}{index:08d}{suffix}"
 
-    def load_boxes(self, index: int, width: int, height: int) -> list[Box]:
+    def load_boxes(self, index: int, width: int, height: int) -> tuple[list[Box], list[str]]:
         path = self.frame_path(index, "labels", ".txt")
         if index not in self.saved_frames or not path.exists():
-            return []
-        boxes = []
-        for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-            if not line.strip():
-                continue
-            try:
-                label, *values = line.split()
-                class_id = int(label)
-                center_x, center_y, box_width, box_height = map(float, values)
-                if not 0 <= class_id < len(self.classes) or not all(
-                    math.isfinite(value) and 0 <= value <= 1
-                    for value in (center_x, center_y, box_width, box_height)
-                ):
-                    raise ValueError
-                left = round((center_x - box_width / 2) * width)
-                top = round((center_y - box_height / 2) * height)
-                right = round((center_x + box_width / 2) * width)
-                bottom = round((center_y + box_height / 2) * height)
-                if not (0 <= left < right <= width and 0 <= top < bottom <= height):
-                    raise ValueError
-            except ValueError as error:
-                raise ValueError(f"Invalid YOLO box in {path} at line {line_number}") from error
-            boxes.append(Box(class_id, left, top, right, bottom))
-        return boxes
+            return [], []
+        return read_boxes(path.read_bytes(), len(self.classes), width, height)
 
     def save(self, index: int, image: np.ndarray, timestamp_ns: int, boxes: list[Box]) -> None:
         height, width = image.shape[:2]

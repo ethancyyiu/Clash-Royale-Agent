@@ -35,6 +35,25 @@ Press **Q** or **Esc** in the preview window, close the window, or press **Ctrl+
 
 `recordings/match01.mp4` contains video, and `recordings/match01.timestamps.csv` contains one row per frame submitted to the writer. `frame_index` starts at 0, and `capture_monotonic_ns` is sampled immediately after each successful screen grab. Subtract the first timestamp from a frame's timestamp and divide by 1 billion to get elapsed seconds. The MP4 uses a fixed playback rate, so use the CSV for actual capture intervals, especially when capture falls behind. If a recording has an odd width or height, the encoder input gets one black column on the right or row at the bottom as needed.
 
+## Crop an existing recording
+
+```sh
+python -m clash_royale.capture.crop recordings/full-match.mp4 recordings/game-only.mp4 \
+  --frame 120 --save-region hud_data/game-region.json
+```
+
+Choose a clear frame with `--frame` (zero-based, default 0). Drag a rectangle around the game and press **Enter** to accept or **C** to cancel. Keep the game window in the same place throughout the recording. The tool writes a new video at the source's nominal FPS and preserves frame order. It copies the source capture timestamps by frame index into a matching `.timestamps.csv` when one exists. The export is video-only. An odd crop width or height gets one pixel of padding on the right or bottom.
+
+For a full-monitor source recording, reuse the saved rectangle on that same monitor and desktop layout.
+
+```sh
+python main.py --monitor 1 --region-file hud_data/game-region.json
+python -m clash_royale.capture.crop recordings/another-full-match.mp4 recordings/another-game.mp4 \
+  --region-file hud_data/game-region.json
+```
+
+Pick the source monitor ID with `python main.py --list-monitors`. Regions are relative to the source frame, so an already cropped source needs its original monitor offset added before using its coordinates for live capture.
+
 ## Measure performance
 
 The terminal reports three metrics about once per second.
@@ -45,7 +64,7 @@ The terminal reports three metrics about once per second.
 
 Run the same region for several seconds with preview only, then add `--record` to measure the recording overhead. Use `--fps 0` without recording to measure uncapped throughput, and add `--no-preview` to see how much the preview costs. For recorded footage, compare successive CSV timestamps against the target frame interval (about 33.3 ms at 30 FPS) to check spacing and spot gaps.
 
-`capture.py` provides timestamped BGR NumPy frames for future recognition and tracking. `recording.py` handles video and CSV output, and `main.py` runs the preview and reports timing.
+`clash_royale/capture/screen.py` provides timestamped BGR NumPy frames. `clash_royale/capture/recording.py` writes video and CSV output. Run the capture CLI with `python main.py`.
 
 ## Offline replay and annotation
 
@@ -127,4 +146,51 @@ The JSON reports precision, recall, mAP50, and mAP50–95 overall and per class,
 python infer_video.py recordings/match02.mp4 --weights runs/troops/weights/best.pt --device cpu --imgsz 640 --conf 0.25
 ```
 
-The OpenCV preview shows class names and confidence scores. Press **Q** or **Esc** to exit. In other code, call `Detector.detect(frame)` with a BGR NumPy frame to get boxes in the original pixel coordinates. This accepts the same frame representation as the live capture module.
+The OpenCV preview shows class names and confidence scores. Press **Q** or **Esc** to exit. Import `Detector` from `clash_royale.detection.detector` and call `Detector.detect(frame)` with a BGR NumPy frame to get boxes in the original pixel coordinates.
+
+## Card hand and elixir recognition
+
+### Calibrate and collect references
+
+Record a short clip with the same game crop you intend to use live. Use `annotate.py` to find a clear frame index. Select the four card artwork crops from left to right, using about the same framing for each. Select the elixir bar and its displayed number. Include `--next-card` when the preview is visible. Press **Enter** after each selection or **C** to skip the optional preview. [OpenCV region selection controls](https://docs.opencv.org/4.x/d7/dfc/group__highgui.html)
+
+```sh
+python -m clash_royale.hud calibrate recordings/reference.mp4 --frame 120 --next-card
+python -m clash_royale.hud collect recordings/reference.mp4 --frame 120 \
+  --hand "First card name" "Second card name" - - --elixir 6
+python -m clash_royale.hud collect recordings/reference.mp4 --frame 180 --next-card "Visible card name"
+```
+
+Replace the example indices, names, and elixir value with the labels visible in your recording. Use `-` to skip a hand slot. Collect multiple examples of each card, including bright and dim artwork, and examples of each elixir level you want recognized. Next-card images have their own reference folder because the preview can look different. The tool saves normalized coordinates in `hud_data/calibration.json` and labelled PNG crops under `hud_data/references/`. Reuse the calibration for the same game layout and crop. Recalibrate if the HUD moves relative to the frame.
+
+### Run on a recording or live
+
+```sh
+python -m clash_royale.hud replay recordings/match02.mp4 --states hud_data/replay.jsonl
+python main.py --monitor 1 --region 100 80 540 960 \
+  --hud-calibration hud_data/calibration.json --states hud_data/live.jsonl
+```
+
+For the live command, use the same region as calibration. Add `--weights runs/troops/weights/best.pt --device 0` to overlay YOLO boxes using a trained checkpoint and the training dependencies. Omit the weights to run HUD recognition alone. Add `--no-preview` to write state observations without opening a window. Use a new JSONL filename for each run.
+
+Each JSONL line includes the frame index, timestamp and clock source, elixir, four hand slots, optional next card, confidence scores, and recognition latency. Replay uses the capture CSV timestamps when available and video playback timestamps otherwise. A `null` value means the recognizer could not identify that field. Confidence is similarity to the best template. A replacement seen in the same slot on three consecutive confident frames produces an inferred play/draw event. Use the event as an observation about the hand.
+
+### Evaluate against labelled gameplay
+
+Label frames from a separate recording using `label`. It writes ground truth without adding reference crops. Repeat the command for the frames you want to score.
+
+```sh
+python -m clash_royale.hud label recordings/held-out.mp4 --frame 90 \
+  --hand "First card name" "Second card name" - - --elixir 4
+python -m clash_royale.hud evaluate recordings/held-out.mp4
+```
+
+Evaluation reports per-slot hand accuracy, next-card accuracy when labelled, exact elixir accuracy, mean absolute elixir error for recognized values, unknown rates, and mean and p95 recognition latency. Unknown predictions count as incorrect for labelled fields. Use `--min-score` and `--min-margin` on replay or evaluation to adjust rejection thresholds. The live equivalents are `--hud-min-score` and `--hud-min-margin`.
+
+## Source layout
+
+- `clash_royale/capture/` contains screen capture, recording, and the live preview.
+- `clash_royale/dataset/` contains replay annotation, YOLO export, and match-based dataset preparation.
+- `clash_royale/detection/` contains model training, evaluation, and offline video inference.
+- `clash_royale/hud/` contains calibration, template recognition, and HUD evaluation.
+- The scripts at the repository root remain the command-line entry points used throughout this README.

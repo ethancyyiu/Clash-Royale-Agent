@@ -4,3 +4,4 @@ __pycache__/
 /dataset/
 /runs/
 /yolo*.pt
+/hud_data/

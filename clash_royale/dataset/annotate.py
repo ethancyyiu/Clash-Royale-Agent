@@ -1,4 +1,5 @@
 import argparse
+import json
 import math
 import os
 import sys
@@ -15,12 +16,31 @@ WINDOW = "Gameplay Replay Annotator"
 TRACKBAR = "Frame"
 
 
+def load_review_flags(path: Path, source_id: str, count: int) -> dict[int, list[str]]:
+    report = json.loads(path.read_text(encoding="utf-8"))
+    entries = report.get("flagged_frames") if isinstance(report, dict) else None
+    if not isinstance(entries, list):
+        raise ValueError("Expected a quality report from check_dataset.py.")
+    flags = {}
+    for frame in entries:
+        if frame.get("video_sha256") == source_id and 0 <= frame["frame_index"] < count:
+            messages = flags.setdefault(frame["frame_index"], [])
+            messages.extend(issue["message"] for issue in frame["issues"])
+    if not flags:
+        raise ValueError("No flagged frames for this video. Open a source MP4 listed in the report.")
+    return flags
+
+
 class Annotator:
-    def __init__(self, video: cv2.VideoCapture, dataset: Dataset, count: int, fps: float):
+    def __init__(
+        self, video: cv2.VideoCapture, dataset: Dataset, count: int, fps: float,
+        review_flags: dict[int, list[str]] | None = None,
+    ):
         self.video = video
         self.dataset = dataset
         self.count = count
         self.fps = fps
+        self.review_flags = review_flags
         self.index = -1
         self.boxes: list[Box] = []
         self.active_class = 0
@@ -32,6 +52,7 @@ class Annotator:
         self.redraw = True
         self.next_frame_at: float | None = None
         self.message = ""
+        self.label_error_count = 0
 
     def show_frame(self, index: int) -> None:
         index = max(0, min(self.count - 1, index))
@@ -62,11 +83,18 @@ class Annotator:
             self.view_left = (self.canvas_width - self.view_width) // 2
             self.index = index
             self.reload_boxes()
+            if self.review_flags and index in self.review_flags:
+                print(f"Frame {index} flagged for review:", flush=True)
+                for reason in self.review_flags[index]:
+                    print(f"  {reason}", flush=True)
         cv2.setTrackbarPos(TRACKBAR, WINDOW, self.index)
         self.redraw = True
 
     def reload_boxes(self) -> None:
-        self.boxes = self.dataset.load_boxes(self.index, self.width, self.height)
+        self.boxes, errors = self.dataset.load_boxes(self.index, self.width, self.height)
+        self.label_error_count = len(errors)
+        for error in errors:
+            print(f"Frame {self.index}: {error}", file=sys.stderr, flush=True)
         self.selected = None
         self.redrawing = False
         self.dirty = False
@@ -132,12 +160,15 @@ class Annotator:
             offsets = {ord("a"): -1, ord("d"): 1, ord("j"): -jump, ord("l"): jump}
             if key in offsets:
                 target = self.index + offsets[key]
-            elif key == ord("p"):
-                target = max((i for i in self.dataset.saved_frames if i < self.index), default=None)
             else:
-                target = min((i for i in self.dataset.saved_frames if i > self.index), default=None)
+                frames = self.review_flags if self.review_flags is not None else self.dataset.saved_frames
+                if key == ord("p"):
+                    target = max((i for i in frames if i < self.index), default=None)
+                else:
+                    target = min((i for i in frames if i > self.index), default=None)
             if target is None:
-                self.message = "No saved frame in that direction."
+                kind = "flagged" if self.review_flags is not None else "saved"
+                self.message = f"No {kind} frame in that direction."
             else:
                 self.show_frame(target)
         elif key in b"[]":
@@ -147,6 +178,7 @@ class Annotator:
             self.next_frame_at = None
             self.dataset.save(self.index, self.image, self.timestamp_ns, self.boxes)
             self.dirty = False
+            self.label_error_count = 0
             self.message = "Frame and labels saved."
         elif key == ord("r"):
             self.reload_boxes()
@@ -183,10 +215,18 @@ class Annotator:
         if self.dirty:
             saved = "Unsaved edits"
         active = self.dataset.classes[self.active_class]
+        navigation = "P/N saved frames"
+        if self.review_flags is not None:
+            navigation = "P/N flagged frames"
+            if self.index in self.review_flags:
+                saved += " | Flagged (see terminal)"
+        help_text = f"Space play/pause | A/D step | {navigation} | S save | Q quit"
+        if self.label_error_count:
+            help_text = f"{self.label_error_count} invalid label rows skipped. Redraw as needed. S replaces labels."
         lines = [
             f"{state} | Frame {self.index}/{self.count - 1} | {self.timestamp_ns / 1e9:.3f} s | {saved}",
             f"Class {self.active_class}: {active}  ([ / ]) | {len(self.boxes)} boxes",
-            self.message or "Space play/pause | A/D step | P/N saved frames | S save | Q quit",
+            self.message or help_text,
         ]
         for row, line in enumerate(lines):
             cv2.putText(canvas, line, (8, self.view_height + 19 + row * 22),
@@ -205,7 +245,10 @@ class Annotator:
 
     def run(self, review: bool) -> None:
         cv2.createTrackbar(TRACKBAR, WINDOW, 0, max(1, self.count - 1), lambda _position: None)
-        self.show_frame(min(self.dataset.saved_frames, default=0) if review else 0)
+        start = min(self.dataset.saved_frames, default=0) if review else 0
+        if self.review_flags is not None:
+            start = min(self.review_flags, default=0)
+        self.show_frame(start)
         cv2.setMouseCallback(WINDOW, self.mouse)
         while True:
             if self.redraw:
@@ -234,7 +277,9 @@ def main() -> int:
     parser.add_argument("--dataset", type=Path, default=Path("dataset"), help="output folder (default: dataset)")
     parser.add_argument("--classes", type=Path, help="text file with one class name per line")
     parser.add_argument("--match", help="group multiple clips from the same match under this ID")
-    parser.add_argument("--review", action="store_true", help="start at the first saved frame")
+    review = parser.add_mutually_exclusive_group()
+    review.add_argument("--review", action="store_true", help="start at the first saved frame")
+    review.add_argument("--review-report", type=Path, help="start at the first flagged frame and navigate it with P/N")
     args = parser.parse_args()
 
     video = cv2.VideoCapture()
@@ -249,10 +294,11 @@ def main() -> int:
             raise ValueError("The MP4 did not report a valid frame rate and frame count.")
 
         dataset = Dataset(args.dataset, args.video, args.classes, args.match)
+        flags = load_review_flags(args.review_report, dataset.source_id, int(count)) if args.review_report else None
         print(f"Match {dataset.match} | dataset {dataset.root}", flush=True)
         cv2.namedWindow(WINDOW, cv2.WINDOW_AUTOSIZE)
         window_created = True
-        Annotator(video, dataset, int(count), fps).run(args.review)
+        Annotator(video, dataset, int(count), fps, flags).run(args.review)
     except KeyboardInterrupt:
         return 0
     except (OSError, ValueError, cv2.error) as error:

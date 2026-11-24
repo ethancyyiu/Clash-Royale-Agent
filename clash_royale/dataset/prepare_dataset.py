@@ -202,12 +202,13 @@ def write_split_bundle(
             labels = sample.labels
             if troop_only:
                 rows = []
-                for line in labels.splitlines():
+                for line in labels.decode("utf-8").splitlines():
                     if line.strip():
                         class_id, coordinates = line.split(maxsplit=1)
-                        if int(class_id) in class_map:
-                            rows.append(f"{class_map[int(class_id)]} ".encode("ascii") + coordinates + b"\n")
-                labels = b"".join(rows)
+                        target_id = class_map.get(int(class_id))
+                        if target_id is not None:
+                            rows.append(f"{target_id} {coordinates}\n")
+                labels = "".join(rows).encode("utf-8")
                 write_file(export / "labels" / sample.key.with_suffix(".txt"), labels)
                 exported_image = export / "images" / image_key
                 write_file(exported_image, image_path.read_bytes())
@@ -259,7 +260,7 @@ def main() -> int:
             print(f"Found {dataset.repeated_pixels} repeated-pixel frame(s) within matches. Kept in the same split.")
         print(f"Prepared {len(dataset.samples)} images. Dataset YAML is at {yaml_path}.")
         print("Validation matches: " + ", ".join(sorted(validation)))
-    except (OSError, ValueError) as error:
+    except (OSError, ValueError, cv2.error) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
     return 0

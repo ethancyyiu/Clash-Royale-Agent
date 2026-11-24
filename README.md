@@ -103,9 +103,18 @@ Each MP4 gets its own match group by default. If a match spans multiple clips, p
 
 Saving the same video and frame index again updates its labels in place. The tool identifies source videos by their content, so reopening a renamed copy in the same dataset keeps the same exports.
 
-### Use the data for troop detection
+### Review dataset quality
 
-Label every visible instance of the classes you intend to train on in each selected image. When ready to train, assign whole match groups to either training or validation. A YOLO dataset YAML can point to separate train and validation image lists and use the class order in `classes.txt`. For a troop-only model, prepare a label copy that keeps Friendly troop and Enemy troop and maps them to the IDs in the training configuration. [YOLO dataset configuration](https://docs.ultralytics.com/datasets/detect/)
+```sh
+python check_dataset.py --dataset dataset --troop-only
+python annotate.py recordings/match01.mp4 --dataset dataset --review-report dataset/quality.json
+```
+
+The checker writes `dataset/quality.json` with a list of flagged images, their source videos and frame numbers, and the reason for each flag. It reports invalid boxes by line and class counts across the dataset and for each match. Classes with zero boxes or fewer than one quarter of the most common class's boxes are flagged as underrepresented. Omit `--troop-only` to assess coverage and balance for all annotation classes.
+
+Review empty annotation files and frames with no target boxes for missed troops. A frame is flagged for few boxes when it has at most half the median positive box count for its match. Exact and potential near-duplicates include the matching frame for comparison. The near-duplicate check compares thumbnails from same-size images. Confirm the flags visually, including intentional background frames and similar frames with distinct gameplay. If preparation rejects an exact duplicate across matches, keep one of the exports in the active dataset and archive the other PNG, label, and metadata together.
+
+Open a source MP4 named in the report. The annotator starts at its first flagged frame and prints the reasons in the terminal. Use **P / N** to step through that video's flags and **A / D** or the slider to see surrounding frames. Use **[ / ]** to select the appropriate troop class and drag a box around each visible unlabeled troop. Use **E**, **C**, or **X** on a selected box to resize, relabel, or remove it. The editor displays valid boxes when some rows are malformed and lists the skipped rows in the terminal. Inspect the frame and redraw any affected boxes before pressing **S** to save. Re-run the checker after edits to refresh the report.
 
 ## YOLO training and evaluation
 
@@ -117,9 +126,17 @@ Use the same environment as capture and annotation. Preparation only needs the e
 python prepare_dataset.py --dataset dataset --val-fraction 0.2 --seed 0
 ```
 
+For a troop-only experiment, prepare the two-class dataset and optional box previews with this command.
+
+```sh
+python prepare_dataset.py --dataset dataset --troop-only --val-fraction 0.2 --seed 0 --preview
+```
+
+The troop-only bundle lives in `dataset/splits/troops/`. Its image lists point to copied PNGs with separate YOLO labels for `0 friendly_troop` and `1 enemy_troop`, mapped from the names in the original `classes.txt`. The original annotations and class IDs are preserved. Frames with zero troop boxes become background examples in this bundle, so confirm they contain no visible troops before training. Open the JPEGs in the printed preview directory to inspect the boxes actually exported. Omit `--preview` during preparation to skip rendering previews.
+
 The fraction applies to **matches**, with at least one match in each split. Use `--val-match MATCH_ID` (repeat for multiple matches) to keep specific matches in validation as you collect more footage. Use the match IDs printed by the annotator or listed in the metadata.
 
-The validator reports missing or unreadable exports, invalid class IDs and box coordinates, duplicate source video/frame IDs, and identical pixels across matches. It reports repeated pixels within a match and keeps those frames together. An empty label file represents a valid background image. Review the match lists, background counts, and per-class box counts in `dataset/splits/split.json`. That folder also contains `data.yaml`, `train.txt`, and `val.txt`. [Ultralytics dataset layout](https://docs.ultralytics.com/datasets/detect/)
+For the same validation match as the first run, use `--val-match match-f381ad78d798fcc8` if that match is present. Review the match lists, background counts, and class counts in the selected bundle's `split.json` and check that both troop classes have examples in both splits. The bundle also contains `data.yaml`, `train.txt`, and `val.txt`. Preparation rejects missing or unreadable exports, invalid labels, duplicate source video/frame IDs and identical pixels across matches. It reports repeated pixels within a match and keeps those frames together. [Ultralytics dataset layout](https://docs.ultralytics.com/datasets/detect/)
 
 ### Train after collecting real labeled gameplay
 
@@ -128,9 +145,15 @@ python -m pip install -r requirements-training.txt
 python train.py --dataset dataset --model yolo11n.pt --epochs 50 --imgsz 640 --batch 8 --device cpu --output runs/troops
 ```
 
+When ready to launch the troop-only experiment, use the prepared troop split and a new run directory.
+
+```sh
+python train.py --dataset dataset --troop-only --model yolo11n.pt --epochs 50 --imgsz 640 --batch 8 --device cpu --output runs/troops-only
+```
+
 Use `--device 0` for the first CUDA GPU with a compatible PyTorch installation. The default pretrained YOLO11 nano checkpoint can download on first use. You can also pass the path to a local pretrained detection checkpoint. Training requires annotated objects in both splits and checks that the exports still match preparation. Rerun preparation after editing or adding samples. [Ultralytics training options](https://docs.ultralytics.com/modes/train/)
 
-The new run directory contains `results.csv`, `weights/best.pt`, `weights/last.pt`, `args.yaml`, `run_config.json`, and the split files under `dataset/`. The run's lists reference the original PNGs and labels. Keep those files unchanged to reproduce evaluation for that run.
+The new run directory contains `results.csv`, `weights/best.pt`, `weights/last.pt`, `args.yaml`, `run_config.json`, and the split files under `dataset/`. An all-class run references the original exports. A troop-only run stores its own copies of the PNGs and filtered labels. Keep the run's image and label files unchanged to reproduce evaluation.
 
 ### Evaluate the validation matches
 
@@ -139,6 +162,12 @@ python evaluate.py --weights runs/troops/weights/best.pt --data runs/troops/data
 ```
 
 The JSON reports precision, recall, mAP50, and mAP50–95 overall and per class, along with each class's validation instance count. Classes absent from validation have null per-class metrics. Latency is the average milliseconds per image on the specified device and batch size. The report includes model inference alone and the combined preprocessing, inference, and postprocessing time. [Ultralytics validation metrics and timing](https://docs.ultralytics.com/guides/model-evaluation-insights/)
+
+For the troop-only experiment, evaluate with its own checkpoint and dataset YAML. The `per_class` list has separate entries for `friendly_troop` and `enemy_troop`.
+
+```sh
+python evaluate.py --weights runs/troops-only/weights/best.pt --data runs/troops-only/dataset/data.yaml --device cpu --imgsz 640 --batch 1 --output runs/troops-only/evaluation.json
+```
 
 ### Preview predictions on a recorded MP4
 

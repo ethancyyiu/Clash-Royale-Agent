@@ -135,6 +135,8 @@ The fraction applies to **matches**, with at least one match in each split. Use 
 
 The validator reports missing or unreadable exports, invalid class IDs and box coordinates, duplicate source video/frame IDs, and identical pixels across matches. It reports repeated pixels within a match and keeps those frames together. An empty label file represents a valid background image. Review the match lists, background counts, and per-class box counts in `dataset/splits/split.json`. That folder also contains `data.yaml`, `train.txt`, and `val.txt`. [Ultralytics dataset layout](https://docs.ultralytics.com/datasets/detect/)
 
+For a detector that recognizes troops only, add `--troop-only --preview` to preparation. This creates a two-class copy under `dataset/splits/troops/` and JPEG previews of the exported boxes. Give the same `--troop-only` flag to `train.py`. Buildings and spell effects should not have troop boxes; they can remain visible in the images without a label. On Windows, training defaults to zero data loader workers; `--workers` overrides this.
+
 ### Train after collecting real labeled gameplay
 
 ```sh

@@ -1,0 +1,34 @@
+{
+  "dataset_root": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\dataset",
+  "dataset_sha256": "1f03fea5fcbe76f4edc58e4bb7ba364f057f1e83e3b51c8a355728ec303e5348",
+  "classes": [
+    "friendly_troop",
+    "enemy_troop"
+  ],
+  "troop_only": true,
+  "repeated_pixel_frames_within_match": 0,
+  "train": {
+    "matches": [
+      "match-1c75cd356bf2116a",
+      "match-8081a809156422a2",
+      "match-d164a214c52a6b7b"
+    ],
+    "images": 87,
+    "background_images": 3,
+    "boxes_per_class": [
+      177,
+      108
+    ]
+  },
+  "val": {
+    "matches": [
+      "match-f381ad78d798fcc8"
+    ],
+    "images": 13,
+    "background_images": 1,
+    "boxes_per_class": [
+      11,
+      28
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "weights": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v2\\weights\\best.pt",
+  "ultralytics": "8.4.216",
+  "validation": {
+    "data": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v2\\dataset\\data.yaml",
+    "device": "cpu",
+    "imgsz": 640,
+    "batch": 1,
+    "split": "val",
+    "plots": false,
+    "project": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v2",
+    "name": "validation",
+    "exist_ok": true
+  },
+  "overall": {
+    "precision": 0.6090848520004792,
+    "recall": 0.6493506493506493,
+    "mAP50": 0.631661869430344,
+    "mAP50-95": 0.3423142982865421
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "name": "friendly_troop",
+      "instances": 11,
+      "precision": 0.49570638299724357,
+      "recall": 0.7272727272727273,
+      "mAP50": 0.6317146017699116,
+      "mAP50-95": 0.3661371713203133
+    },
+    {
+      "class_id": 1,
+      "name": "enemy_troop",
+      "instances": 28,
+      "precision": 0.7224633210037148,
+      "recall": 0.5714285714285714,
+      "mAP50": 0.6316091370907764,
+      "mAP50-95": 0.31849142525277085
+    }
+  ],
+  "latency_ms_per_image": {
+    "preprocess": 1.1144692297630872,
+    "inference": 132.04266923108102,
+    "loss": 0.002623075628294968,
+    "postprocess": 1.1194615385298117,
+    "preprocess_inference_postprocess": 134.27659999937393
+  }
+}

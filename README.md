@@ -70,6 +70,19 @@ Run the same region for several seconds with preview only, then add `--record` t
 
 The annotator uses the same Python environment and dependencies as capture. Open any MP4 from a desktop session. Keep a capture's `.timestamps.csv` next to the video to preserve its monotonic frame timestamps.
 
+### Build a review queue
+
+The current detector was trained from only 48 labelled frames across two matches. Before relying on its predictions, add labels from other matches. Generate a queue that samples the recording every two seconds, skips frames already labelled for that source video, and spreads suggestions across time and visually different scenes:
+
+```sh
+python suggest_frames.py recordings/match03.mp4 --dataset dataset --limit 30
+python annotate.py recordings/match03.mp4 --dataset dataset --queue dataset/queues/match03.json
+python suggest_frames.py recordings/match04.mp4 --dataset dataset --limit 30
+python annotate.py recordings/match04.mp4 --dataset dataset --queue dataset/queues/match04.json
+```
+
+The queue contains frame indices and the source video's SHA-256 digest. The annotator checks the digest before opening it, starts at the first unlabelled suggestion, and uses **,** and **.** for the previous and next unlabelled suggestion. Save the boxes with **S**; the next queue jump then skips that frame. Use `--start-seconds` and `--end-seconds` to restrict a clip, and `--stride-seconds` to adjust how densely candidate frames are scanned. Review every suggested frame and label every visible instance of each class you train. Run `prepare_dataset.py` again after adding labels, keeping whole matches in the validation split, then retrain and evaluate on a separate match. The queue proposes frames for human review; it does not create labels or assess their correctness.
+
 ```sh
 python annotate.py recordings/match01.mp4 --dataset dataset
 python annotate.py recordings/match01.mp4 --dataset dataset --review
@@ -86,7 +99,8 @@ python annotate.py recordings/match01.mp4 --dataset dataset --review
 | **E**, then **left drag** | Redraw the selected box to move or resize it |
 | **C / X** | Assign the active class to the selected box or delete it |
 | **S / R** | Save the current frame and boxes, or revert to the last saved boxes |
-| **P / N** | Jump to the previous or next saved frame in this video |
+| **P / N** | Jump to the previous or next saved frame, or to a flagged frame when using `--review-report` |
+| **, / .** | Jump to the previous or next unlabelled queue suggestion when using `--queue` |
 | **Q / Esc** | Quit |
 
 Save or revert pending edits before navigating. Use **S** on a frame with no boxes to save it as a background image. Reopen the same video with `--review` to go straight to its first saved frame. Saved boxes appear automatically when you visit an exported frame.
@@ -132,7 +146,7 @@ For a troop-only experiment, prepare the two-class dataset and optional box prev
 python prepare_dataset.py --dataset dataset --troop-only --val-fraction 0.2 --seed 0 --preview
 ```
 
-The troop-only bundle lives in `dataset/splits/troops/`. Its image lists point to copied PNGs with separate YOLO labels for `0 friendly_troop` and `1 enemy_troop`, mapped from the names in the original `classes.txt`. The original annotations and class IDs are preserved. Frames with zero troop boxes become background examples in this bundle, so confirm they contain no visible troops before training. Open the JPEGs in the printed preview directory to inspect the boxes actually exported. Omit `--preview` during preparation to skip rendering previews.
+The troop-only bundle lives in `dataset/splits/troops/`. Its image lists point to copied PNGs with separate YOLO labels for `0 friendly_troop` and `1 enemy_troop`, mapped from the names in the original `classes.txt`. The original annotations and class IDs are preserved. Draw troop boxes only around troops. Buildings and spell effects can remain visible without a label in this bundle. Frames with zero troop boxes become background examples, so confirm they contain no visible troops before training. Open the JPEGs in the printed preview directory to inspect the boxes actually exported. Omit `--preview` during preparation to skip rendering previews.
 
 The fraction applies to **matches**, with at least one match in each split. Use `--val-match MATCH_ID` (repeat for multiple matches) to keep specific matches in validation as you collect more footage. Use the match IDs printed by the annotator or listed in the metadata.
 
@@ -152,6 +166,8 @@ python train.py --dataset dataset --troop-only --model yolo11n.pt --epochs 50 --
 ```
 
 Use `--device 0` for the first CUDA GPU with a compatible PyTorch installation. The default pretrained YOLO11 nano checkpoint can download on first use. You can also pass the path to a local pretrained detection checkpoint. Training requires annotated objects in both splits and checks that the exports still match preparation. Rerun preparation after editing or adding samples. [Ultralytics training options](https://docs.ultralytics.com/modes/train/)
+
+On Windows, training defaults to zero data loader workers. Use `--workers` to override the default.
 
 The new run directory contains `results.csv`, `weights/best.pt`, `weights/last.pt`, `args.yaml`, `run_config.json`, and the split files under `dataset/`. An all-class run references the original exports. A troop-only run stores its own copies of the PNGs and filtered labels. Keep the run's image and label files unchanged to reproduce evaluation.
 

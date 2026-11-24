@@ -1,0 +1,17 @@
+{
+  "model": "yolo11n.pt",
+  "ultralytics": "8.4.216",
+  "training": {
+    "data": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v2\\dataset\\data.yaml",
+    "epochs": 50,
+    "imgsz": 640,
+    "batch": 8,
+    "device": "cpu",
+    "project": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs",
+    "name": "troops-v2",
+    "exist_ok": true,
+    "pretrained": true,
+    "save": true,
+    "workers": 0
+  }
+}

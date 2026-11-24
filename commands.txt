@@ -1,3 +1,3 @@
-python main.py --monitor 1 --region-file hud_data/game-region.json --record recordings/match03.mp4
+python main.py --monitor 1 --region-file hud_data/game_region.json --record recordings/match03.mp4
 
 python annotate.py recordings/match03.mp4 --dataset dataset

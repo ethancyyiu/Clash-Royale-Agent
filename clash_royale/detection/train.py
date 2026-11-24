@@ -17,11 +17,13 @@ def main() -> int:
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--imgsz", type=int, default=640, help="training image size in pixels")
     parser.add_argument("--batch", type=int, default=8)
+    parser.add_argument("--workers", type=int, default=0 if sys.platform == "win32" else 8,
+                        help="data loader processes (default: 0 on Windows, 8 elsewhere)")
     parser.add_argument("--device", default="cpu", help="cpu or GPU index such as 0")
     parser.add_argument("--output", type=Path, default=Path("runs/train"), help="new run directory")
     args = parser.parse_args()
-    if min(args.epochs, args.imgsz, args.batch) <= 0:
-        parser.error("--epochs, --imgsz, and --batch must be positive")
+    if min(args.epochs, args.imgsz, args.batch) <= 0 or args.workers < 0:
+        parser.error("--epochs, --imgsz, and --batch must be positive; --workers must be nonnegative")
     if Path(args.model).suffix.lower() != ".pt":
         parser.error("--model must be a pretrained .pt checkpoint")
 
@@ -59,6 +61,7 @@ def main() -> int:
             "exist_ok": True,
             "pretrained": True,
             "save": True,
+            "workers": args.workers,
         }
         config = {"model": args.model, "ultralytics": version("ultralytics"), "training": settings}
         write_file(output / "run_config.json", (json.dumps(config, indent=2) + "\n").encode("utf-8"))

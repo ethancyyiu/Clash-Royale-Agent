@@ -1,0 +1,84 @@
+{
+  "weights": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops\\weights\\best.pt",
+  "ultralytics": "8.4.216",
+  "validation": {
+    "data": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops\\dataset\\data.yaml",
+    "device": "cpu",
+    "imgsz": 640,
+    "batch": 1,
+    "split": "val",
+    "plots": false,
+    "project": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops",
+    "name": "validation",
+    "exist_ok": true
+  },
+  "overall": {
+    "precision": 0.7909681730295188,
+    "recall": 0.17847662473703105,
+    "mAP50": 0.18281170088904783,
+    "mAP50-95": 0.10705897447915631
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "name": "Friendly troop",
+      "instances": 11,
+      "precision": 0.40262019367124935,
+      "recall": 0.36363636363636365,
+      "mAP50": 0.3534593024194199,
+      "mAP50-95": 0.2267893872957601
+    },
+    {
+      "class_id": 1,
+      "name": "Enemy troop",
+      "instances": 28,
+      "precision": 0.5522206714763447,
+      "recall": 0.5287467600487916,
+      "mAP50": 0.38688096069296585,
+      "mAP50-95": 0.19555976347168963
+    },
+    {
+      "class_id": 2,
+      "name": "Friendly tower",
+      "instances": 6,
+      "precision": 1.0,
+      "recall": 0.0,
+      "mAP50": 0.012103408796968262,
+      "mAP50-95": 0.00707297663368839
+    },
+    {
+      "class_id": 3,
+      "name": "Enemy tower",
+      "instances": 8,
+      "precision": 1.0,
+      "recall": 0.0,
+      "mAP50": 0.16161483253588518,
+      "mAP50-95": 0.10587274499464346
+    },
+    {
+      "class_id": 4,
+      "name": "Card",
+      "instances": 20,
+      "precision": 1.0,
+      "recall": 0.0,
+      "mAP50": 0.0,
+      "mAP50-95": 0.0
+    },
+    {
+      "class_id": 5,
+      "name": "Other / unknown",
+      "instances": 0,
+      "precision": null,
+      "recall": null,
+      "mAP50": null,
+      "mAP50-95": null
+    }
+  ],
+  "latency_ms_per_image": {
+    "preprocess": 3.1503615380363326,
+    "inference": 96.64346923091216,
+    "loss": 0.0015384609399076838,
+    "postprocess": 62.62093846173509,
+    "preprocess_inference_postprocess": 162.4147692306836
+  }
+}

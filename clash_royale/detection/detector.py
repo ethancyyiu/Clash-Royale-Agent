@@ -1,8 +1,16 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
 import cv2
 import numpy as np
+
+
+def add_detector_options(parser, *, required: bool = False) -> None:
+    parser.add_argument("--weights", type=Path, required=required, help="trained YOLO checkpoint")
+    parser.add_argument("--device", default="cpu", help="YOLO device, e.g. cpu or 0")
+    parser.add_argument("--imgsz", type=int, default=640, help="YOLO input image size")
+    parser.add_argument("--conf", type=float, default=0.25, help="minimum YOLO confidence")
 
 
 def load_detection_model(weights: str | Path):
@@ -26,6 +34,8 @@ class Detection:
 
 class Detector:
     def __init__(self, weights: Path, *, device: str = "cpu", imgsz: int = 640, conf: float = 0.25):
+        if imgsz <= 0 or not 0 <= conf <= 1:
+            raise ValueError("--imgsz must be positive and --conf must be in [0, 1]")
         if not weights.is_file():
             raise FileNotFoundError(f"Checkpoint does not exist: {weights}")
         self.model = load_detection_model(weights)
@@ -45,7 +55,7 @@ class Detector:
         ]
 
 
-def draw_detections(frame: np.ndarray, detections: list[Detection]) -> np.ndarray:
+def draw_detections(frame: np.ndarray, detections: Sequence[Detection]) -> np.ndarray:
     annotated = frame.copy()
     for detection in detections:
         left, top, right, bottom = map(round, detection.xyxy)

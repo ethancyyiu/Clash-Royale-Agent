@@ -1,23 +1,18 @@
-import json
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from time import monotonic_ns
-from typing import Protocol, TextIO
+from typing import Protocol
 
 import cv2
 import numpy as np
 
+from ..detection.detector import draw_detections
+from ..game_state import GameState, HandChange, Reading
 from .calibration import Calibration
 
 DEFAULT_SCORE = 0.86
 DEFAULT_MARGIN = 0.025
 Label = str | int
-
-
-@dataclass(frozen=True)
-class Reading:
-    value: Label | None = None
-    confidence: float = 0.0
 
 
 class CropRecognizer(Protocol):
@@ -68,13 +63,6 @@ class TemplateBank:
         return Reading(None if score < self.min_score or ambiguous else self.labels[best], score)
 
 
-@dataclass(frozen=True)
-class HandChange:
-    slot: int
-    played: str
-    drawn: str
-
-
 @dataclass
 class SlotHistory:
     stable: str | None = None
@@ -100,21 +88,6 @@ class SlotHistory:
         if previous is not None and previous != value:
             return previous, value
         return None
-
-
-@dataclass(frozen=True)
-class GameState:
-    timestamp_ns: int
-    timestamp_source: str
-    frame_index: int
-    elixir: Reading
-    hand: tuple[Reading, ...]
-    next_card: Reading | None
-    hand_changes: tuple[HandChange, ...]
-    recognition_latency_ms: float
-
-    def write(self, stream: TextIO) -> None:
-        stream.write(json.dumps(asdict(self), ensure_ascii=False, allow_nan=False) + "\n")
 
 
 class HudRecognizer:
@@ -167,6 +140,9 @@ class HudRecognizer:
 
 
 def draw_hud(frame: np.ndarray, state: GameState) -> np.ndarray:
+    if state.detections:
+        frame = draw_detections(frame, state.detections)
+
     def description(reading: Reading) -> str:
         return "?" if reading.value is None else f"{reading.value} ({reading.confidence:.2f})"
 

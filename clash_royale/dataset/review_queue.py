@@ -148,7 +148,7 @@ def main() -> int:
         return 1
     print(f"Wrote {len(queue['frames'])} suggested frames to {output}")
     if queue["frames"]:
-        print("Open with: python annotate.py", args.video, "--dataset", args.dataset, "--queue", output)
+        print("Open with: python -m clash_royale annotate", args.video, "--dataset", args.dataset, "--queue", output)
     else:
         print("No unlabelled candidates remain in the selected time window.")
     return 0

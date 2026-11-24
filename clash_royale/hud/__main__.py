@@ -9,11 +9,13 @@ from time import monotonic
 
 import cv2
 
+from ..capture.video import frame_timestamp, open_video, read_frame
 from ..dataset.replay_dataset import read_capture_timestamps, write_file
+from ..detection.detector import Detector, add_detector_options
+from ..game_state import observe_game
 from .calibration import DEFAULT_CALIBRATION, DEFAULT_REFERENCES, Calibration, select_calibration
 from .evaluation import evaluate, load_labels
 from .recognition import DEFAULT_MARGIN, DEFAULT_SCORE, HudRecognizer, draw_hud
-from .video import frame_timestamp, open_video, read_frame
 
 DEFAULT_LABELS = Path("hud_data/labels.jsonl")
 WINDOW = "Gameplay HUD Replay"
@@ -47,7 +49,7 @@ def parse_args():
         ("calibrate", "select HUD regions on a recorded frame"),
         ("collect", "crop labelled reference images from a recording"),
         ("label", "save ground-truth labels for evaluation"),
-        ("replay", "recognize the HUD in an MP4"),
+        ("replay", "read the HUD and optionally detect troops in an MP4"),
         ("evaluate", "score HUD recognition on labelled frames"),
     ):
         command = commands.add_parser(name, help=help_text)
@@ -68,8 +70,9 @@ def parse_args():
         if name in ("replay", "evaluate"):
             add_recognition_options(command)
         if name == "replay":
-            command.add_argument("--states", type=Path, help="write observations to a new JSONL file")
+            command.add_argument("--states", type=Path, help="write game states to a new JSONL file")
             command.add_argument("--no-preview", action="store_true")
+            add_detector_options(command)
     return parser.parse_args()
 
 
@@ -117,6 +120,7 @@ def replay(args, recognizer: HudRecognizer) -> None:
         require_display()
     elif args.states is None:
         raise ValueError("--no-preview requires --states.")
+    detector = Detector(args.weights, device=args.device, imgsz=args.imgsz, conf=args.conf) if args.weights else None
     timestamps = read_capture_timestamps(args.video)
     if args.states is not None:
         args.states.parent.mkdir(parents=True, exist_ok=True)
@@ -135,7 +139,7 @@ def replay(args, recognizer: HudRecognizer) -> None:
                 while ok:
                     started = monotonic()
                     timestamp, source = frame_timestamp(video, fps, index, timestamps)
-                    state = recognizer.observe(image, timestamp, source, index)
+                    state = observe_game(image, timestamp, source, index, recognizer, detector)
                     if state_file is not None:
                         state.write(state_file)
                     if window_created:
@@ -177,7 +181,7 @@ def main() -> int:
                     replay(args, recognizer)
     except KeyboardInterrupt:
         return 0
-    except (OSError, ValueError, cv2.error) as error:
+    except (OSError, RuntimeError, ValueError, cv2.error) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
     return 0

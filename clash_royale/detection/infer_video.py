@@ -7,7 +7,7 @@ from time import monotonic
 
 import cv2
 
-from .detector import Detector, draw_detections
+from .detector import Detector, add_detector_options, draw_detections
 
 WINDOW = "Gameplay Detections"
 
@@ -15,10 +15,7 @@ WINDOW = "Gameplay Detections"
 def main() -> int:
     parser = argparse.ArgumentParser(description="Preview YOLO detections on an offline MP4.")
     parser.add_argument("video", type=Path)
-    parser.add_argument("--weights", type=Path, required=True, help="trained .pt checkpoint")
-    parser.add_argument("--device", default="cpu", help="cpu or GPU index such as 0")
-    parser.add_argument("--imgsz", type=int, default=640)
-    parser.add_argument("--conf", type=float, default=0.25, help="minimum detection confidence")
+    add_detector_options(parser, required=True)
     args = parser.parse_args()
     if args.imgsz <= 0 or not 0 <= args.conf <= 1:
         parser.error("--imgsz must be positive and --conf must be in [0, 1]")

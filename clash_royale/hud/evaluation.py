@@ -5,9 +5,9 @@ from statistics import fmean
 
 import numpy as np
 
+from ..capture.video import frame_timestamp, open_video
 from ..dataset.replay_dataset import read_capture_timestamps
 from .recognition import HudRecognizer
-from .video import frame_timestamp, open_video
 
 
 def load_labels(path: Path, video_filename: str) -> dict[int, dict]:

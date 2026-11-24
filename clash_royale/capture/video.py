@@ -27,3 +27,11 @@ def read_frame(path: Path, index: int):
         if not ok or video.get(cv2.CAP_PROP_POS_FRAMES) != index + 1:
             raise ValueError(f"Cannot decode frame {index} from {path}")
         return image
+
+
+def frame_timestamp(video, fps: float, index: int, capture_timestamps: dict[int, int]) -> tuple[int, str]:
+    if index in capture_timestamps:
+        return capture_timestamps[index], "capture_monotonic"
+    milliseconds = video.get(cv2.CAP_PROP_POS_MSEC)
+    ns = round(milliseconds * 1e6) if math.isfinite(milliseconds) and milliseconds > 0 else round(index * 1e9 / fps)
+    return ns, "video_playback"

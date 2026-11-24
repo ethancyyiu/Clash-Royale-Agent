@@ -30,12 +30,14 @@ def main() -> int:
     try:
         manifest = prepared_split_dir(args.dataset, args.troop_only) / "split.json"
         if not manifest.is_file():
-            prepare = "prepare_dataset.py --troop-only" if args.troop_only else "prepare_dataset.py"
+            prepare = "python -m clash_royale prepare-dataset"
+            if args.troop_only:
+                prepare += " --troop-only"
             raise ValueError(f"Run {prepare} for this dataset first.")
         prepared = json.loads(manifest.read_text(encoding="utf-8"))
         dataset = inspect_dataset(args.dataset)
         if dataset.fingerprint != prepared["dataset_sha256"]:
-            raise ValueError("The dataset has changed. Run prepare_dataset.py again before training.")
+            raise ValueError("The dataset has changed. Run prepare-dataset again before training.")
         validation = choose_validation_matches(dataset, explicit=prepared["val"]["matches"])
         class_ids = training_class_ids(dataset.classes, args.troop_only)
         for split, select_val in (("train", False), ("val", True)):

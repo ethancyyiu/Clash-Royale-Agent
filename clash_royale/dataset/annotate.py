@@ -20,7 +20,7 @@ def load_review_flags(path: Path, source_id: str, count: int) -> dict[int, list[
     report = json.loads(path.read_text(encoding="utf-8"))
     entries = report.get("flagged_frames") if isinstance(report, dict) else None
     if not isinstance(entries, list):
-        raise ValueError("Expected a review report from check_dataset.py or evaluate.py --holdout.")
+        raise ValueError("Expected a review report from check-dataset or evaluate --holdout.")
     flags = {}
     for frame in entries:
         if frame.get("video_sha256") == source_id and 0 <= frame["frame_index"] < count:

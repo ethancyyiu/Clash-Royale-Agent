@@ -13,13 +13,14 @@ from time import monotonic_ns, sleep
 import cv2
 import mss
 
-from ..detection.detector import Detector, draw_detections
+from ..dataset.replay_dataset import write_file
+from ..detection.detector import Detector, add_detector_options, draw_detections
+from ..game_state import observe_game
 from ..hud.calibration import DEFAULT_REFERENCES, Calibration
 from ..hud.recognition import DEFAULT_MARGIN, DEFAULT_SCORE, HudRecognizer, draw_hud
-from .screen import draw_region, grab_frame, select_region
 from .recording import record_video
 from .region_file import load_region
-from ..dataset.replay_dataset import write_file
+from .screen import draw_region, grab_frame, select_region
 
 WINDOW = "Clash Royale Capture"
 NS_PER_SECOND = 1_000_000_000
@@ -48,11 +49,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--hud-references", type=Path, default=DEFAULT_REFERENCES)
     parser.add_argument("--hud-min-score", type=float, default=DEFAULT_SCORE)
     parser.add_argument("--hud-min-margin", type=float, default=DEFAULT_MARGIN)
-    parser.add_argument("--states", type=Path, help="write HUD observations to a new JSONL file")
-    parser.add_argument("--weights", type=Path, help="optional trained YOLO checkpoint for preview boxes")
-    parser.add_argument("--device", default="cpu", help="YOLO device, e.g. cpu or 0")
-    parser.add_argument("--imgsz", type=int, default=640, help="YOLO input image size")
-    parser.add_argument("--conf", type=float, default=0.25, help="minimum YOLO confidence")
+    parser.add_argument("--states", type=Path, help="write game states to a new JSONL file")
+    add_detector_options(parser)
     args = parser.parse_args()
     if not math.isfinite(args.fps) or (args.fps != 0 and args.fps < 1):
         parser.error("--fps must be 0 or at least 1")
@@ -62,8 +60,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--record requires a positive --fps")
     if args.states and not args.hud_calibration:
         parser.error("--states requires --hud-calibration")
-    if args.weights and args.no_preview:
-        parser.error("--weights draws boxes in the preview and requires it to be enabled")
+    if args.weights and args.no_preview and not args.states:
+        parser.error("--weights with --no-preview requires --states")
     if args.imgsz <= 0 or not 0 <= args.conf <= 1:
         parser.error("--imgsz must be positive and --conf must be in [0, 1]")
     if args.select_region and (args.region or args.region_file or args.record or args.list_monitors):
@@ -130,17 +128,19 @@ def capture_loop(
                 consecutive_failures = 0
                 if write_frame is not None:
                     write_frame(frame)
-                state = hud.observe(frame.bgr, frame.captured_ns, "capture_monotonic", frame_index) if hud else None
+                state = None
+                if hud is not None:
+                    state = observe_game(frame.bgr, frame.captured_ns, "capture_monotonic", frame_index, hud, detector)
                 if state_file is not None and state is not None:
                     state.write(state_file)
                 frame_index += 1
                 stop = False
                 if not args.no_preview:
                     preview = frame.bgr
-                    if detector is not None:
-                        preview = draw_detections(preview, detector.detect(frame.bgr))
                     if state is not None:
                         preview = draw_hud(preview, state)
+                    elif detector is not None:
+                        preview = draw_detections(preview, detector.detect(frame.bgr))
                     cv2.imshow(WINDOW, preview)
                     stop = preview_finished()
                 grab_times.append(frame.grab_ns)

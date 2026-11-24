@@ -172,6 +172,17 @@ def write_box_preview(image_path: Path, labels: bytes, classes: list[str], outpu
     write_file(output, preview.tobytes())
 
 
+def remap_labels(labels: bytes, class_map: dict[int, int]) -> bytes:
+    rows = []
+    for line in labels.decode("utf-8").splitlines():
+        if line.strip():
+            class_id, coordinates = line.split(maxsplit=1)
+            target_id = class_map.get(int(class_id))
+            if target_id is not None:
+                rows.append(f"{target_id} {coordinates}\n")
+    return "".join(rows).encode("utf-8")
+
+
 def write_split_bundle(
     dataset: Dataset, output: Path, validation: set[str], *, troop_only: bool = False, preview: bool = False,
 ) -> Path:
@@ -201,14 +212,7 @@ def write_split_bundle(
             image_path = dataset.root / "images" / image_key
             labels = sample.labels
             if troop_only:
-                rows = []
-                for line in labels.decode("utf-8").splitlines():
-                    if line.strip():
-                        class_id, coordinates = line.split(maxsplit=1)
-                        target_id = class_map.get(int(class_id))
-                        if target_id is not None:
-                            rows.append(f"{target_id} {coordinates}\n")
-                labels = "".join(rows).encode("utf-8")
+                labels = remap_labels(labels, class_map)
                 write_file(export / "labels" / sample.key.with_suffix(".txt"), labels)
                 exported_image = export / "images" / image_key
                 write_file(exported_image, image_path.read_bytes())

@@ -185,6 +185,32 @@ For the troop-only experiment, evaluate with its own checkpoint and dataset YAML
 python evaluate.py --weights runs/troops-only/weights/best.pt --data runs/troops-only/dataset/data.yaml --device cpu --imgsz 640 --batch 1 --output runs/troops-only/evaluation.json
 ```
 
+### Benchmark troop detection on new matches
+
+Record two fresh matches and annotate about 30 frames per match in `dataset/holdout`. Use a separate annotation directory for training. Label every visible friendly and enemy troop in each selected frame, and save a few frames with no troops to test false positives.
+
+```sh
+python suggest_frames.py recordings/holdout01.mp4 --dataset dataset/holdout --limit 30
+python annotate.py recordings/holdout01.mp4 --dataset dataset/holdout --queue dataset/holdout/queues/holdout01.json
+python suggest_frames.py recordings/holdout02.mp4 --dataset dataset/holdout --limit 30
+python annotate.py recordings/holdout02.mp4 --dataset dataset/holdout --queue dataset/holdout/queues/holdout02.json
+python evaluate.py --holdout dataset/holdout --weights runs/troops-v2/weights/best.pt --output runs/troops-v2/holdout.json
+```
+
+`--holdout` scores the saved checkpoint on all annotated frames in that directory. It reports precision, recall, mAP50, mAP75 and mAP50–95, plus frame-level flags for misses, loose boxes, wrong teams and unmatched predictions. The report also includes per-class precision and recall at a fixed confidence cutoff (`0.25` by default) and IoU of at least `0.50`. The flags use the same cutoff and mark matching boxes below `0.75` IoU as loose. Open a flagged match in the annotator and use **P / N** to review its flagged frames.
+
+```sh
+python annotate.py recordings/holdout01.mp4 --dataset dataset/holdout --review-report runs/troops-v2/holdout.json
+```
+
+Look for recurring errors and collect training examples from other matches that exhibit them. After training a candidate, compare it with the baseline on the same frames. Use the same evaluation settings and Ultralytics version for both runs. If you correct a held-out annotation, reevaluate both checkpoints on the corrected labels.
+
+```sh
+python evaluate.py --holdout dataset/holdout --weights runs/troops-v3/weights/best.pt --baseline runs/troops-v2/holdout.json --output runs/troops-v3/holdout.json
+```
+
+`change_from_baseline` reports metric changes as decimals, so `0.05` is a gain of five percentage points. Check enemy recall and precision under `per_class_at_review_confidence` first. Use mAP75 to see whether performance also improved under tighter box matching. Before relying on a model tuned using these results, confirm it on another fresh match.
+
 ### Preview predictions on a recorded MP4
 
 ```sh

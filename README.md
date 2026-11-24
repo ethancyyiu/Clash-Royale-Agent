@@ -29,6 +29,15 @@ python main.py --monitor 1 --region 100 80 540 960 --fps 30 --record recordings/
 
 `--region X Y WIDTH HEIGHT` uses pixels relative to the selected monitor's top-left corner. Replace the example numbers with the bounds of your game window. Keep the OpenCV preview outside the capture region to avoid capturing it, or add `--no-preview` to record without opening a window.
 
+If the game window moves, draw a new capture box on a still screenshot of the monitor:
+
+```sh
+python main.py --monitor 1 --select-region hud_data/game_region.json
+python main.py --monitor 1 --region-file hud_data/game_region.json
+```
+
+Drag around the game and press **Enter** to save the box; press **C** to cancel without changing the file. Check the preview before recording with `--record`. The saved coordinates apply to future captures; they cannot change footage already recorded.
+
 Press **Q** or **Esc** in the preview window, close the window, or press **Ctrl+C** in the terminal to stop and finalize the recording. A temporary capture error triggers a brief retry. Five consecutive failures end the run with an error.
 
 ## Recordings

@@ -1,4 +1,5 @@
 import argparse
+import json
 import math
 import os
 import signal
@@ -15,9 +16,10 @@ import mss
 from ..detection.detector import Detector, draw_detections
 from ..hud.calibration import DEFAULT_REFERENCES, Calibration
 from ..hud.recognition import DEFAULT_MARGIN, DEFAULT_SCORE, HudRecognizer, draw_hud
-from .screen import grab_frame, select_region
+from .screen import draw_region, grab_frame, select_region
 from .recording import record_video
 from .region_file import load_region
+from ..dataset.replay_dataset import write_file
 
 WINDOW = "Clash Royale Capture"
 NS_PER_SECOND = 1_000_000_000
@@ -28,6 +30,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Preview and record Clash Royale screen capture.")
     parser.add_argument("--list-monitors", action="store_true", help="show monitor IDs and bounds")
     parser.add_argument("--monitor", type=int, default=1, help="monitor ID (default: 1)")
+    parser.add_argument("--select-region", type=Path, metavar="FILE.json",
+                        help="draw a new capture box on a monitor screenshot and save it")
     region = parser.add_mutually_exclusive_group()
     region.add_argument(
         "--region", nargs=4, type=int, metavar=("X", "Y", "WIDTH", "HEIGHT"),
@@ -62,6 +66,10 @@ def parse_args() -> argparse.Namespace:
         parser.error("--weights draws boxes in the preview and requires it to be enabled")
     if args.imgsz <= 0 or not 0 <= args.conf <= 1:
         parser.error("--imgsz must be positive and --conf must be in [0, 1]")
+    if args.select_region and (args.region or args.region_file or args.record or args.list_monitors):
+        parser.error("--select-region cannot be combined with --region, --region-file, --record, or --list-monitors")
+    if args.select_region and args.select_region.suffix.lower() != ".json":
+        parser.error("--select-region requires a .json filename")
     return args
 
 
@@ -185,6 +193,14 @@ def main() -> int:
                         f"Monitor {number}: {monitor['width']}x{monitor['height']} "
                         f"at ({monitor['left']}, {monitor['top']})"
                     )
+                return 0
+
+            if args.select_region:
+                region_coordinates = draw_region(screen, args.monitor)
+                write_file(args.select_region, (
+                    json.dumps({"region": region_coordinates}, indent=2) + "\n"
+                ).encode("utf-8"))
+                print(f"Saved capture region {region_coordinates} to {args.select_region}")
                 return 0
 
             coordinates = load_region(args.region_file) if args.region_file else args.region

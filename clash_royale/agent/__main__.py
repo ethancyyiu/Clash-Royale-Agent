@@ -5,6 +5,7 @@ import argparse
 import json
 import signal
 import sys
+from dataclasses import asdict
 from pathlib import Path
 from time import monotonic_ns, sleep
 
@@ -13,14 +14,13 @@ import mss
 from ..capture.region_file import load_region
 from ..capture.screen import grab_frame, select_region
 from ..detection.detector import Detector, add_detector_options
-from dataclasses import asdict
-
 from ..game_state import observe_game
 from ..hud.calibration import Calibration
 from ..hud.recognition import HudRecognizer
 from .demonstrations import demos
 from .mouse import click, require_windows
 from .policy import Policy, card_name, distance, state_hand
+from .replay import replay as replay_policy
 
 
 def parse_args():
@@ -30,6 +30,14 @@ def parse_args():
     learn.add_argument("--demo", nargs=2, action="append", required=True, metavar=("STATES", "EVENTS"))
     learn.add_argument("--calibration", type=Path, default=Path("hud_data/calibration.json"))
     learn.add_argument("--output", type=Path, required=True)
+    replay = commands.add_parser("replay", help="overlay policy decisions on a recorded match")
+    replay.add_argument("video", type=Path)
+    replay.add_argument("--states", type=Path, required=True)
+    replay.add_argument("--policy", type=Path, required=True)
+    replay.add_argument("--events", type=Path, help="recorded mouse events for human comparison")
+    replay.add_argument("--calibration", type=Path, default=Path("hud_data/calibration.json"))
+    replay.add_argument("--report", type=Path, required=True)
+    replay.add_argument("--output-video", type=Path, help="save an MP4 with card and placement overlays")
     run = commands.add_parser("run", help="run in dry mode, or act with --execute")
     run.add_argument("--policy", type=Path, required=True)
     run.add_argument("--region-file", type=Path, required=True)
@@ -153,6 +161,12 @@ def main():
     try:
         if args.command == "learn":
             learn(args)
+        elif args.command == "replay":
+            result = replay_policy(args.policy, args.states, args.video, args.report,
+                                   events_path=args.events, calibration_path=args.calibration,
+                                   output_video=args.output_video)
+            print(f"Replayed {result['frames']} frames: {result['bot_plays']} bot plays, "
+                  f"{result['human_plays']} confirmed human plays; report in {args.report}")
         else:
             run(args)
     except (OSError, ValueError, RuntimeError) as error:

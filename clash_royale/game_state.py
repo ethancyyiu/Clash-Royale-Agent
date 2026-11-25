@@ -38,6 +38,7 @@ class GameState:
     frame_width: int | None = None
     frame_height: int | None = None
     phase: Reading = Reading()
+    timer_seconds: Reading = Reading()
 
     def write(self, stream: TextIO) -> None:
         payload = asdict(self)

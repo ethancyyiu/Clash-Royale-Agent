@@ -2,6 +2,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 from contextlib import nullcontext
 from pathlib import Path
@@ -65,6 +66,7 @@ def parse_args():
             command.add_argument("--elixir", type=int, choices=range(11))
             command.add_argument("--next-card", type=card_name)
             command.add_argument("--phase", choices=("single", "double", "triple"))
+            command.add_argument("--clock", help="visible match timer as M:SS, for digit references")
         if name == "collect":
             command.add_argument("--references", type=Path, default=DEFAULT_REFERENCES)
         if name in ("label", "evaluate"):
@@ -80,8 +82,10 @@ def parse_args():
 
 def label_frame(args, calibration: Calibration) -> None:
     hand = args.hand or [None] * 4
-    if all(value is None for value in [*hand, args.elixir, args.next_card, args.phase]):
+    if all(value is None for value in [*hand, args.elixir, args.next_card, args.phase, args.clock]):
         raise ValueError("Provide at least one card or an elixir label.")
+    if args.clock is not None and not re.fullmatch(r"[0-9]:[0-5][0-9]", args.clock):
+        raise ValueError("--clock must be M:SS")
     image = read_frame(args.video, args.frame)
     calibration.check_frame(image)
     if args.command == "label":
@@ -91,6 +95,7 @@ def label_frame(args, calibration: Calibration) -> None:
         row = {
             "video_filename": args.video.name, "frame_index": args.frame,
             "hand": hand, "elixir": args.elixir, "next_card": args.next_card, "phase": args.phase,
+            "clock": args.clock,
         }
         args.labels.parent.mkdir(parents=True, exist_ok=True)
         with args.labels.open("a", encoding="utf-8") as file:
@@ -102,9 +107,13 @@ def label_frame(args, calibration: Calibration) -> None:
         raise ValueError("Calibrate the next-card preview before collecting its references.")
     if args.phase is not None and calibration.phase is None:
         raise ValueError("Calibrate the timer/phase region before collecting phase references.")
+    if args.clock is not None and len(calibration.timer_digits) != 3:
+        raise ValueError("Calibrate three timer digit regions before collecting clock references.")
     regions = [("cards", label, region) for label, region in zip(hand, calibration.hand)]
     regions += [("elixir", args.elixir, calibration.elixir), ("next", args.next_card, calibration.next_card)]
     regions += [("phase", args.phase, calibration.phase)]
+    if args.clock is not None:
+        regions += [("timer_digits", digit, region) for digit, region in zip(args.clock.replace(":", ""), calibration.timer_digits)]
     saved = 0
     for kind, label, region in regions:
         if label is None:

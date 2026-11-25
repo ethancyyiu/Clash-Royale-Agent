@@ -94,12 +94,18 @@ class HudRecognizer:
     def __init__(
         self, calibration: Calibration, hand: CropRecognizer, elixir: CropRecognizer,
         next_card: CropRecognizer, phase: CropRecognizer | None = None,
+        timer_digit: CropRecognizer | None = None,
     ):
         self.calibration = calibration
         self.hand = hand
         self.elixir = elixir
         self.next_card = next_card
         self.phase = phase
+        self.timer_digit = timer_digit
+        self.stable_phase: str | None = None
+        self.phase_candidate: str | None = None
+        self.phase_sightings = 0
+        self.phase_seen_ns: int | None = None
         self.history = [SlotHistory() for _ in calibration.hand]
         self.last_timestamp: tuple[str, int] | None = None
 
@@ -116,7 +122,40 @@ class HudRecognizer:
             TemplateBank(references / "elixir", (80, 24), min_score, min_margin, elixir=True),
             TemplateBank(references / "next", (36, 40), min_score, min_margin),
             TemplateBank(references / "phase", (80, 32), min_score, min_margin),
+            TemplateBank(references / "timer_digits", (20, 28), min_score, min_margin),
         )
+
+    def read_timer(self, frame: np.ndarray) -> Reading:
+        if self.timer_digit is None or len(self.calibration.timer_digits) != 3:
+            return Reading()
+        readings = [self.timer_digit.recognize(region.crop(frame)) for region in self.calibration.timer_digits]
+        digits = [reading.value for reading in readings]
+        if any(not isinstance(digit, str) or len(digit) != 1 or not digit.isdigit() for digit in digits):
+            return Reading()
+        minute, tens, ones = map(int, digits)
+        if tens > 5:
+            return Reading()
+        return Reading(minute * 60 + tens * 10 + ones, min(reading.confidence for reading in readings))
+
+    def read_phase(self, frame: np.ndarray, timer: Reading, timestamp_ns: int) -> Reading:
+        raw = self.phase.recognize(self.calibration.phase.crop(frame)) if self.phase is not None and self.calibration.phase is not None else Reading()
+        value = raw.value if raw.value in ("single", "double", "triple") else None
+        if self.calibration.timer_digits and timer.value is None:
+            value = None
+        if value is not None and self.stable_phase is not None:
+            order = {"single": 0, "double": 1, "triple": 2}
+            if order[value] < order[self.stable_phase] and self.phase_seen_ns is not None and timestamp_ns - self.phase_seen_ns < 5_000_000_000:
+                value = None
+        if value != self.phase_candidate:
+            self.phase_candidate, self.phase_sightings = value, 1
+        elif value is not None:
+            self.phase_sightings += 1
+        if value is not None and self.phase_sightings >= 2:
+            self.stable_phase = value
+            self.phase_seen_ns = timestamp_ns
+        if self.stable_phase is not None and self.phase_seen_ns is not None and timestamp_ns - self.phase_seen_ns <= 1_000_000_000:
+            return Reading(self.stable_phase, raw.confidence)
+        return Reading()
 
     def observe(self, frame: np.ndarray, timestamp_ns: int, timestamp_source: str, frame_index: int) -> GameState:
         started = monotonic_ns()
@@ -125,12 +164,17 @@ class HudRecognizer:
         elixir = self.elixir.recognize(self.calibration.elixir.crop(frame))
         region = self.calibration.next_card
         next_card = self.next_card.recognize(region.crop(frame)) if region is not None else None
-        phase = self.phase.recognize(self.calibration.phase.crop(frame)) if self.phase is not None and self.calibration.phase is not None else Reading()
         if self.last_timestamp is not None:
             source, stamp = self.last_timestamp
             if source != timestamp_source or timestamp_ns < stamp:
                 self.history = [SlotHistory() for _ in hand]
+                self.stable_phase = None
+                self.phase_candidate = None
+                self.phase_sightings = 0
+                self.phase_seen_ns = None
         self.last_timestamp = timestamp_source, timestamp_ns
+        timer = self.read_timer(frame)
+        phase = self.read_phase(frame, timer, timestamp_ns)
         changes = []
         for slot, (history, reading) in enumerate(zip(self.history, hand), 1):
             change = history.update(reading.value if isinstance(reading.value, str) else None, timestamp_ns)
@@ -140,6 +184,7 @@ class HudRecognizer:
             timestamp_ns, timestamp_source, frame_index, elixir, hand, next_card,
             tuple(changes), (monotonic_ns() - started) / 1e6,
             phase=phase,
+            timer_seconds=timer,
         )
 
 
@@ -153,6 +198,9 @@ def draw_hud(frame: np.ndarray, state: GameState) -> np.ndarray:
     lines = [f"Frame {state.frame_index}   Elixir: {description(state.elixir)}"]
     if state.phase.value is not None:
         lines.append(f"Phase: {description(state.phase)}")
+    if state.timer_seconds.value is not None:
+        minutes, seconds = divmod(state.timer_seconds.value, 60)
+        lines.append(f"Timer: {minutes}:{seconds:02d}")
     lines.extend(f"{i}. {description(reading)}" for i, reading in enumerate(state.hand, 1))
     if state.next_card is not None:
         lines.append(f"Next: {description(state.next_card)}")

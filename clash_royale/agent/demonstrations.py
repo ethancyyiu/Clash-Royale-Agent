@@ -17,7 +17,7 @@ def inside(point, region):
     return region["left"] <= point["x"] <= region["right"] and region["top"] <= point["y"] <= region["bottom"]
 
 
-def demos(states_path: Path, events_path: Path, calibration: dict):
+def demos(states_path: Path, events_path: Path, calibration: dict, *, include_plays=False):
     states, events = read_jsonl(states_path), read_jsonl(events_path)
     if not states:
         raise ValueError(f"No states in {states_path}")
@@ -66,4 +66,5 @@ def demos(states_path: Path, events_path: Path, calibration: dict):
             continue
         waits.append(example(state))
         last = stamp
-    return [item for _, item in plays] + waits, len(plays)
+    samples = [item for _, item in plays] + waits
+    return (samples, len(plays), plays) if include_plays else (samples, len(plays))

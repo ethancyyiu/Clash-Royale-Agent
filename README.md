@@ -277,14 +277,16 @@ Evaluation reports per-slot hand accuracy, next-card accuracy when labelled, exa
 
 The first policy supports Giant, Graveyard, Bowler, Evo Witch, Guards, Zappies, Snowball, and Arrows. It learns card choice and placement from your recorded inputs. Single elixir blocks learned Giant and Graveyard pushes; double and triple elixir permit them. It will not act when the phase, hand, or elixir is unknown. The fixed card costs in `clash_royale/agent/policy.py` should be checked against your in-game deck before live use.
 
-Calibrate once using a clear frame from the same game crop. Include the timer and elixir multiplier in the phase region. Collect examples of the cards, every elixir value, and `single`, `double`, and `triple` at several different timer readings and visual states. Label frames from a different match and use `hud evaluate` to inspect accuracy before recording demonstrations.
+Calibrate once using a clear frame from the same game crop. With `--phase`, select the multiplier area (including its appearance during single elixir) and then the three timer digits individually, excluding the colon. Collect examples of the cards, every elixir value, multiplier phases, and timer digits at several different times. The phase reader requires two consecutive readings and carries a confirmed phase for at most one second across unreadable frames. Label frames from a different match and use `hud evaluate` to inspect phase and clock accuracy before recording demonstrations.
 
 ```sh
 python -m clash_royale hud calibrate recordings/match03.mp4 --frame 120 --next-card --phase
-python -m clash_royale hud collect recordings/match03.mp4 --frame 120 --phase single
-python -m clash_royale hud label recordings/match04.mp4 --frame 120 --phase single
+python -m clash_royale hud collect recordings/match03.mp4 --frame 120 --phase single --clock 2:45
+python -m clash_royale hud label recordings/match04.mp4 --frame 120 --phase single --clock 2:45
 python -m clash_royale hud evaluate recordings/match04.mp4
 ```
+
+Replace the sample frame indices and `--clock` values with what is actually visible. Collect the phase's multiplier appearance and digit examples across the countdown; a single reference for each is unlikely to cover the match.
 
 Record at least two complete matches in which you play normally. Keep each MP4, state file, and input event file together. The mouse recorder logs left button transitions and uses capture-relative coordinates. Do not resize or move the emulator after calibrating. Use new filenames for each match; the commands refuse to overwrite recordings or logs.
 
@@ -295,6 +297,12 @@ python -m clash_royale agent learn --demo hud_data/demo01.states.jsonl hud_data/
 ```
 
 `learn` confirms a play only when the selected card is replaced in that hand slot shortly after placement. It samples waiting states, reserves the last supplied match for an agreement report, and stores examples from the earlier matches. More demonstration matches improve coverage. The troop detector currently performs poorly on fresh matches; improve and reevaluate it before trusting live decisions.
+
+Replay the learned policy on a recorded match before using live input. The optional input events add your confirmed card placements to the overlay and report. The report lists predicted actions, nearby human actions, card agreement, and placement distance. Use a match that was not included in policy training for an honest comparison.
+
+```sh
+python -m clash_royale agent replay recordings/demo02.mp4 --states hud_data/demo02.states.jsonl --events hud_data/demo02.inputs.jsonl --policy runs/giant-graveyard/policy.json --report runs/giant-graveyard/replay.json --output-video runs/giant-graveyard/replay.mp4
+```
 
 Run in dry mode first and inspect the JSONL decision log. `--execute` sends card and arena clicks to the emulator. Press Ctrl+C to stop. A play must be confirmed by a subsequent hand change before another play is sent. Practice matches are the right place to verify coordinates and behavior.
 

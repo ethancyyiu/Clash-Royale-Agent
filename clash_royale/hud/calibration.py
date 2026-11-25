@@ -39,11 +39,13 @@ class Calibration:
     elixir: Region
     next_card: Region | None = None
     phase: Region | None = None
+    timer_digits: tuple[Region, ...] = ()
 
     def __post_init__(self):
         if (
             type(self.frame_width) is not int or type(self.frame_height) is not int
             or min(self.frame_width, self.frame_height) <= 0 or len(self.hand) != 4
+            or len(self.timer_digits) not in (0, 3)
         ):
             raise ValueError("Calibration needs valid frame dimensions and exactly four card slots.")
 
@@ -64,6 +66,7 @@ class Calibration:
                 data["frame_width"], data["frame_height"], tuple(Region(**box) for box in data["hand"]),
                 Region(**data["elixir"]), Region(**data["next_card"]) if data.get("next_card") is not None else None,
                 Region(**data["phase"]) if data.get("phase") is not None else None,
+                tuple(Region(**box) for box in data.get("timer_digits", [])),
             )
         except (KeyError, TypeError, ValueError) as error:
             raise ValueError(f"Invalid calibration file {path}: {error}") from error
@@ -90,7 +93,8 @@ def select_calibration(frame: np.ndarray, include_next: bool, include_phase: boo
         hand = tuple(select(f"card slot {i} (left to right)") for i in range(1, 5))
         elixir = select("the elixir bar and its visible digit")
         next_card = select("the next-card preview", optional=True) if include_next else None
-        phase = select("the match timer and elixir multiplier", optional=True) if include_phase else None
-        return Calibration(width, height, hand, elixir, next_card, phase)
+        phase = select("the elixir multiplier area, including its single-elixir appearance") if include_phase else None
+        timer_digits = tuple(select(f"timer digit {i} (minutes, tens, ones)") for i in range(1, 4)) if include_phase else ()
+        return Calibration(width, height, hand, elixir, next_card, phase, timer_digits)
     finally:
         cv2.destroyWindow(window)

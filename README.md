@@ -273,6 +273,36 @@ python -m clash_royale hud evaluate recordings/held-out.mp4
 
 Evaluation reports per-slot hand accuracy, next-card accuracy when labelled, exact elixir accuracy, mean absolute elixir error for recognized values, unknown rates, and mean and p95 recognition latency. Unknown predictions count as incorrect for labelled fields. Use `--min-score` and `--min-margin` on replay or evaluation to adjust rejection thresholds. The live equivalents are `--hud-min-score` and `--hud-min-margin`.
 
+## Learn a Giant Graveyard bot from your own matches (Windows emulator)
+
+The first policy supports Giant, Graveyard, Bowler, Evo Witch, Guards, Zappies, Snowball, and Arrows. It learns card choice and placement from your recorded inputs. Single elixir blocks learned Giant and Graveyard pushes; double and triple elixir permit them. It will not act when the phase, hand, or elixir is unknown. The fixed card costs in `clash_royale/agent/policy.py` should be checked against your in-game deck before live use.
+
+Calibrate once using a clear frame from the same game crop. Include the timer and elixir multiplier in the phase region. Collect examples of the cards, every elixir value, and `single`, `double`, and `triple` at several different timer readings and visual states. Label frames from a different match and use `hud evaluate` to inspect accuracy before recording demonstrations.
+
+```sh
+python -m clash_royale hud calibrate recordings/match03.mp4 --frame 120 --next-card --phase
+python -m clash_royale hud collect recordings/match03.mp4 --frame 120 --phase single
+python -m clash_royale hud label recordings/match04.mp4 --frame 120 --phase single
+python -m clash_royale hud evaluate recordings/match04.mp4
+```
+
+Record at least two complete matches in which you play normally. Keep each MP4, state file, and input event file together. The mouse recorder logs left button transitions and uses capture-relative coordinates. Do not resize or move the emulator after calibrating. Use new filenames for each match; the commands refuse to overwrite recordings or logs.
+
+```sh
+python -m clash_royale capture --monitor 1 --region-file hud_data/game_region.json --fps 30 --record recordings/demo01.mp4 --hud-calibration hud_data/calibration.json --weights runs/troops-v2/weights/best.pt --states hud_data/demo01.states.jsonl --input-events hud_data/demo01.inputs.jsonl --no-preview
+python -m clash_royale capture --monitor 1 --region-file hud_data/game_region.json --fps 30 --record recordings/demo02.mp4 --hud-calibration hud_data/calibration.json --weights runs/troops-v2/weights/best.pt --states hud_data/demo02.states.jsonl --input-events hud_data/demo02.inputs.jsonl --no-preview
+python -m clash_royale agent learn --demo hud_data/demo01.states.jsonl hud_data/demo01.inputs.jsonl --demo hud_data/demo02.states.jsonl hud_data/demo02.inputs.jsonl --output runs/giant-graveyard/policy.json
+```
+
+`learn` confirms a play only when the selected card is replaced in that hand slot shortly after placement. It samples waiting states, reserves the last supplied match for an agreement report, and stores examples from the earlier matches. More demonstration matches improve coverage. The troop detector currently performs poorly on fresh matches; improve and reevaluate it before trusting live decisions.
+
+Run in dry mode first and inspect the JSONL decision log. `--execute` sends card and arena clicks to the emulator. Press Ctrl+C to stop. A play must be confirmed by a subsequent hand change before another play is sent. Practice matches are the right place to verify coordinates and behavior.
+
+```sh
+python -m clash_royale agent run --policy runs/giant-graveyard/policy.json --monitor 1 --region-file hud_data/game_region.json --calibration hud_data/calibration.json --weights runs/troops-v2/weights/best.pt --log runs/giant-graveyard/dry-run.jsonl
+python -m clash_royale agent run --policy runs/giant-graveyard/policy.json --monitor 1 --region-file hud_data/game_region.json --calibration hud_data/calibration.json --weights runs/troops-v2/weights/best.pt --log runs/giant-graveyard/practice.jsonl --execute
+```
+
 ## Source layout
 
 - `clash_royale/capture/` contains screen capture, recording, and the live preview.

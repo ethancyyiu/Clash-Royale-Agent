@@ -18,6 +18,7 @@ from ..detection.detector import Detector, add_detector_options, draw_detections
 from ..game_state import observe_game
 from ..hud.calibration import DEFAULT_REFERENCES, Calibration
 from ..hud.recognition import DEFAULT_MARGIN, DEFAULT_SCORE, HudRecognizer, draw_hud
+from ..agent.mouse import MouseRecorder
 from .recording import record_video
 from .region_file import load_region
 from .screen import draw_region, grab_frame, select_region
@@ -50,6 +51,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--hud-min-score", type=float, default=DEFAULT_SCORE)
     parser.add_argument("--hud-min-margin", type=float, default=DEFAULT_MARGIN)
     parser.add_argument("--states", type=Path, help="write game states to a new JSONL file")
+    parser.add_argument("--input-events", type=Path, help="record your mouse actions with capture timestamps (Windows)")
     add_detector_options(parser)
     args = parser.parse_args()
     if not math.isfinite(args.fps) or (args.fps != 0 and args.fps < 1):
@@ -60,6 +62,8 @@ def parse_args() -> argparse.Namespace:
         parser.error("--record requires a positive --fps")
     if args.states and not args.hud_calibration:
         parser.error("--states requires --hud-calibration")
+    if args.input_events and (not args.states or not args.record):
+        parser.error("--input-events requires --states and --record")
     if args.weights and args.no_preview and not args.states:
         parser.error("--weights with --no-preview requires --states")
     if args.imgsz <= 0 or not 0 <= args.conf <= 1:
@@ -103,6 +107,10 @@ def capture_loop(
         if args.states:
             args.states.parent.mkdir(parents=True, exist_ok=True)
             state_file = resources.enter_context(args.states.open("x", encoding="utf-8"))
+        if args.input_events:
+            args.input_events.parent.mkdir(parents=True, exist_ok=True)
+            event_file = resources.enter_context(args.input_events.open("x", encoding="utf-8"))
+            resources.enter_context(MouseRecorder(event_file, region))
         frame_index = 0
         report_started_ns = monotonic_ns()
         grab_times = []

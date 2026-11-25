@@ -59,10 +59,12 @@ def parse_args():
             command.add_argument("--frame", type=int, default=0, help="zero-based frame index")
         if name == "calibrate":
             command.add_argument("--next-card", action="store_true", help="also select the next-card preview")
+            command.add_argument("--phase", action="store_true", help="also select the match timer and multiplier")
         if name in ("collect", "label"):
             command.add_argument("--hand", type=card_name, nargs=4, metavar="CARD", help="four labels left to right; - to skip")
             command.add_argument("--elixir", type=int, choices=range(11))
             command.add_argument("--next-card", type=card_name)
+            command.add_argument("--phase", choices=("single", "double", "triple"))
         if name == "collect":
             command.add_argument("--references", type=Path, default=DEFAULT_REFERENCES)
         if name in ("label", "evaluate"):
@@ -78,7 +80,7 @@ def parse_args():
 
 def label_frame(args, calibration: Calibration) -> None:
     hand = args.hand or [None] * 4
-    if all(value is None for value in [*hand, args.elixir, args.next_card]):
+    if all(value is None for value in [*hand, args.elixir, args.next_card, args.phase]):
         raise ValueError("Provide at least one card or an elixir label.")
     image = read_frame(args.video, args.frame)
     calibration.check_frame(image)
@@ -88,7 +90,7 @@ def label_frame(args, calibration: Calibration) -> None:
             raise ValueError("This frame already has ground-truth labels in that file.")
         row = {
             "video_filename": args.video.name, "frame_index": args.frame,
-            "hand": hand, "elixir": args.elixir, "next_card": args.next_card,
+            "hand": hand, "elixir": args.elixir, "next_card": args.next_card, "phase": args.phase,
         }
         args.labels.parent.mkdir(parents=True, exist_ok=True)
         with args.labels.open("a", encoding="utf-8") as file:
@@ -98,8 +100,11 @@ def label_frame(args, calibration: Calibration) -> None:
 
     if args.next_card is not None and calibration.next_card is None:
         raise ValueError("Calibrate the next-card preview before collecting its references.")
+    if args.phase is not None and calibration.phase is None:
+        raise ValueError("Calibrate the timer/phase region before collecting phase references.")
     regions = [("cards", label, region) for label, region in zip(hand, calibration.hand)]
     regions += [("elixir", args.elixir, calibration.elixir), ("next", args.next_card, calibration.next_card)]
+    regions += [("phase", args.phase, calibration.phase)]
     saved = 0
     for kind, label, region in regions:
         if label is None:
@@ -164,7 +169,7 @@ def main() -> int:
     try:
         if args.command == "calibrate":
             require_display()
-            calibration = select_calibration(read_frame(args.video, args.frame), args.next_card)
+            calibration = select_calibration(read_frame(args.video, args.frame), args.next_card, args.phase)
             calibration.save(args.calibration)
             print(f"Saved HUD calibration to {args.calibration}")
         else:

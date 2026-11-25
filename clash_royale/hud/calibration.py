@@ -38,6 +38,7 @@ class Calibration:
     hand: tuple[Region, ...]
     elixir: Region
     next_card: Region | None = None
+    phase: Region | None = None
 
     def __post_init__(self):
         if (
@@ -62,12 +63,13 @@ class Calibration:
             return cls(
                 data["frame_width"], data["frame_height"], tuple(Region(**box) for box in data["hand"]),
                 Region(**data["elixir"]), Region(**data["next_card"]) if data.get("next_card") is not None else None,
+                Region(**data["phase"]) if data.get("phase") is not None else None,
             )
         except (KeyError, TypeError, ValueError) as error:
             raise ValueError(f"Invalid calibration file {path}: {error}") from error
 
 
-def select_calibration(frame: np.ndarray, include_next: bool) -> Calibration:
+def select_calibration(frame: np.ndarray, include_next: bool, include_phase: bool = False) -> Calibration:
     height, width = frame.shape[:2]
     scale = min(1.0, 1100 / width, 760 / height)
     preview = cv2.resize(frame, (max(1, round(width * scale)), max(1, round(height * scale))))
@@ -88,6 +90,7 @@ def select_calibration(frame: np.ndarray, include_next: bool) -> Calibration:
         hand = tuple(select(f"card slot {i} (left to right)") for i in range(1, 5))
         elixir = select("the elixir bar and its visible digit")
         next_card = select("the next-card preview", optional=True) if include_next else None
-        return Calibration(width, height, hand, elixir, next_card)
+        phase = select("the match timer and elixir multiplier", optional=True) if include_phase else None
+        return Calibration(width, height, hand, elixir, next_card, phase)
     finally:
         cv2.destroyWindow(window)

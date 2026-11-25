@@ -93,12 +93,13 @@ class SlotHistory:
 class HudRecognizer:
     def __init__(
         self, calibration: Calibration, hand: CropRecognizer, elixir: CropRecognizer,
-        next_card: CropRecognizer,
+        next_card: CropRecognizer, phase: CropRecognizer | None = None,
     ):
         self.calibration = calibration
         self.hand = hand
         self.elixir = elixir
         self.next_card = next_card
+        self.phase = phase
         self.history = [SlotHistory() for _ in calibration.hand]
         self.last_timestamp: tuple[str, int] | None = None
 
@@ -114,6 +115,7 @@ class HudRecognizer:
             TemplateBank(references / "cards", (40, 52), min_score, min_margin),
             TemplateBank(references / "elixir", (80, 24), min_score, min_margin, elixir=True),
             TemplateBank(references / "next", (36, 40), min_score, min_margin),
+            TemplateBank(references / "phase", (80, 32), min_score, min_margin),
         )
 
     def observe(self, frame: np.ndarray, timestamp_ns: int, timestamp_source: str, frame_index: int) -> GameState:
@@ -123,6 +125,7 @@ class HudRecognizer:
         elixir = self.elixir.recognize(self.calibration.elixir.crop(frame))
         region = self.calibration.next_card
         next_card = self.next_card.recognize(region.crop(frame)) if region is not None else None
+        phase = self.phase.recognize(self.calibration.phase.crop(frame)) if self.phase is not None and self.calibration.phase is not None else Reading()
         if self.last_timestamp is not None:
             source, stamp = self.last_timestamp
             if source != timestamp_source or timestamp_ns < stamp:
@@ -136,6 +139,7 @@ class HudRecognizer:
         return GameState(
             timestamp_ns, timestamp_source, frame_index, elixir, hand, next_card,
             tuple(changes), (monotonic_ns() - started) / 1e6,
+            phase=phase,
         )
 
 
@@ -147,6 +151,8 @@ def draw_hud(frame: np.ndarray, state: GameState) -> np.ndarray:
         return "?" if reading.value is None else f"{reading.value} ({reading.confidence:.2f})"
 
     lines = [f"Frame {state.frame_index}   Elixir: {description(state.elixir)}"]
+    if state.phase.value is not None:
+        lines.append(f"Phase: {description(state.phase)}")
     lines.extend(f"{i}. {description(reading)}" for i, reading in enumerate(state.hand, 1))
     if state.next_card is not None:
         lines.append(f"Next: {description(state.next_card)}")

@@ -28,6 +28,7 @@ def load_labels(path: Path, video_filename: str) -> dict[int, dict]:
                 hand = label["hand"]
                 next_card = label["next_card"]
                 elixir = label["elixir"]
+                phase = label.get("phase")
                 if not isinstance(hand, list) or len(hand) != 4:
                     raise ValueError("hand must contain exactly four slots")
                 if any(value is not None and (not isinstance(value, str) or not value.strip())
@@ -35,7 +36,9 @@ def load_labels(path: Path, video_filename: str) -> dict[int, dict]:
                     raise ValueError("card labels must be nonempty names or null")
                 if elixir is not None and (type(elixir) is not int or not 0 <= elixir <= 10):
                     raise ValueError("elixir must be an integer from 0 to 10 or null")
-                if all(value is None for value in [*hand, next_card, elixir]):
+                if phase is not None and phase not in ("single", "double", "triple"):
+                    raise ValueError("phase must be single, double, triple, or null")
+                if all(value is None for value in [*hand, next_card, elixir, phase]):
                     raise ValueError("at least one ground-truth value is needed")
                 labels[index] = label
             except (KeyError, ValueError) as error:
@@ -48,7 +51,7 @@ def evaluate(video_path: Path, labels_path: Path, recognizer: HudRecognizer) -> 
     if not labels:
         raise ValueError(f"No ground truth for {video_path.name} in {labels_path}")
     timestamps = read_capture_timestamps(video_path)
-    counts = {field: Counter() for field in ("hand", "next_card", "elixir")}
+    counts = {field: Counter() for field in ("hand", "next_card", "elixir", "phase")}
     latencies = []
     elixir_errors = []
 
@@ -76,6 +79,7 @@ def evaluate(video_path: Path, labels_path: Path, recognizer: HudRecognizer) -> 
                 score("hand", expected, reading.value)
             score("next_card", truth["next_card"], state.next_card.value if state.next_card is not None else None)
             score("elixir", truth["elixir"], state.elixir.value)
+            score("phase", truth.get("phase"), state.phase.value)
             if truth["elixir"] is not None and isinstance(state.elixir.value, int):
                 elixir_errors.append(abs(truth["elixir"] - state.elixir.value))
 
@@ -96,6 +100,7 @@ def evaluate(video_path: Path, labels_path: Path, recognizer: HudRecognizer) -> 
             **report(counts["elixir"]),
             "mean_absolute_error_when_recognized": fmean(elixir_errors) if elixir_errors else None,
         },
+        "phase": report(counts["phase"]),
         "overall": report(sum(counts.values(), Counter())),
         "recognition_latency_ms": {"mean": fmean(latencies), "p95": float(np.percentile(latencies, 95))},
     }

@@ -13,7 +13,7 @@ COMMANDS = {
     "evaluate": (".detection.evaluate", "score a troop detector"),
     "infer-video": (".detection.infer_video", "preview detections in a recording"),
     "hud": (".hud.__main__", "calibrate, collect references, replay or evaluate the HUD"),
-    "agent": (".agent.__main__", "learn from your play and run a Giant Graveyard bot"),
+    "agent": (".agent.__main__", "learn from recorded play and review decisions offline"),
 }
 
 

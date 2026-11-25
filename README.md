@@ -275,7 +275,7 @@ Evaluation reports per-slot hand accuracy, next-card accuracy when labelled, exa
 
 ## Learn a Giant Graveyard bot from your own matches (Windows emulator)
 
-The first policy supports Giant, Graveyard, Bowler, Evo Witch, Guards, Zappies, Snowball, and Arrows. It learns card choice and placement from your recorded inputs. Single elixir blocks learned Giant and Graveyard pushes; double and triple elixir permit them. It will not act when the phase, hand, or elixir is unknown. The fixed card costs in `clash_royale/agent/policy.py` should be checked against your in-game deck before live use.
+The offline policy supports Giant, Graveyard, Bowler, Evo Witch, Guards, Zappies, Snowball, and Arrows. It learns card choice and placement from recorded inputs. Single elixir blocks learned Giant and Graveyard pushes; double and triple elixir permit them. It waits when the phase, hand, or elixir is unknown. Check the fixed card costs in `clash_royale/agent/policy.py` against your in-game deck before evaluating decisions.
 
 Calibrate once using a clear frame from the same game crop. With `--phase`, select the multiplier area (including its appearance during single elixir) and then the three timer digits individually, excluding the colon. Collect examples of the cards, every elixir value, multiplier phases, and timer digits at several different times. The phase reader requires two consecutive readings and carries a confirmed phase for at most one second across unreadable frames. Label frames from a different match and use `hud evaluate` to inspect phase and clock accuracy before recording demonstrations.
 
@@ -296,28 +296,12 @@ python -m clash_royale capture --monitor 1 --region-file hud_data/game_region.js
 python -m clash_royale agent learn --demo hud_data/demo01.states.jsonl hud_data/demo01.inputs.jsonl --demo hud_data/demo02.states.jsonl hud_data/demo02.inputs.jsonl --output runs/giant-graveyard/policy.json
 ```
 
-`learn` confirms a play only when the selected card is replaced in that hand slot shortly after placement. It samples waiting states, reserves the last supplied match for an agreement report, and stores examples from the earlier matches. More demonstration matches improve coverage. The troop detector currently performs poorly on fresh matches; improve and reevaluate it before trusting live decisions.
+`learn` confirms a play only when the selected card is replaced in that hand slot shortly after placement. It samples waiting states, reserves the last supplied match for an agreement report, and stores examples from the earlier matches. More demonstration matches improve coverage. The troop detector currently performs poorly on fresh matches, so review its errors before relying on policy decisions.
 
-Replay the learned policy on a recorded match before using live input. The optional input events add your confirmed card placements to the overlay and report. The report lists predicted actions, nearby human actions, card agreement, and placement distance. Use a match that was not included in policy training for an honest comparison.
+Replay the learned policy on a recorded match. The optional input events add your confirmed card placements to the overlay and report. The report lists predicted actions, nearby human actions, card agreement, and placement distance. Use a match that was not included in policy training for an honest comparison.
 
 ```sh
 python -m clash_royale agent replay recordings/demo02.mp4 --states hud_data/demo02.states.jsonl --events hud_data/demo02.inputs.jsonl --policy runs/giant-graveyard/policy.json --report runs/giant-graveyard/replay.json --output-video runs/giant-graveyard/replay.mp4
-```
-
-For offline development, `agent simulate` runs complete abstract matches against repeating rush, defensive, and random scripted opponents. It records every observation and action, tower health, illegal actions, and results. Use the same seed and match count when comparing policy versions. The simulator is deliberately simplified and its win rate does not predict Clash Royale results.
-
-```sh
-python -m clash_royale agent simulate --matches 9 --seed 0 --output runs/giant-graveyard/scripted-baseline.json
-python -m clash_royale agent simulate --policy runs/giant-graveyard/policy.json --matches 9 --seed 0 --output runs/giant-graveyard/simulation.json
-```
-
-Use `python -m clash_royale agent status` to see which calibration, reference, policy, and benchmark artifacts are still missing. Pass `--policy` and `--simulation` after creating those files.
-
-Run in dry mode first and inspect the JSONL decision log. `--execute` sends card and arena clicks to the emulator. Press Ctrl+C to stop. A play must be confirmed by a subsequent hand change before another play is sent. Practice matches are the right place to verify coordinates and behavior.
-
-```sh
-python -m clash_royale agent run --policy runs/giant-graveyard/policy.json --monitor 1 --region-file hud_data/game_region.json --calibration hud_data/calibration.json --weights runs/troops-v2/weights/best.pt --log runs/giant-graveyard/dry-run.jsonl
-python -m clash_royale agent run --policy runs/giant-graveyard/policy.json --monitor 1 --region-file hud_data/game_region.json --calibration hud_data/calibration.json --weights runs/troops-v2/weights/best.pt --log runs/giant-graveyard/practice.jsonl --execute
 ```
 
 ## Source layout

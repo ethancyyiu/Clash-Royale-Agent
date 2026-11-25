@@ -1,4 +1,4 @@
-"""Windows desktop input, with a polling recorder that needs no extra package."""
+"""Windows mouse event recording for synchronized demonstrations."""
 from __future__ import annotations
 
 import ctypes
@@ -58,13 +58,3 @@ class MouseRecorder:
                 self.stream.write(json.dumps(row) + "\n")
                 previous = pressed
             sleep(0.005)
-
-
-def click(x: int, y: int) -> None:
-    user32 = require_windows()
-    if not user32.SetCursorPos(x, y):
-        raise OSError("SetCursorPos failed")
-    # mouse_event coordinates come from the current cursor; avoids display scaling assumptions.
-    user32.mouse_event(0x0002, 0, 0, 0, 0)
-    sleep(0.04)
-    user32.mouse_event(0x0004, 0, 0, 0, 0)

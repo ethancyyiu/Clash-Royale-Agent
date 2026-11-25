@@ -304,6 +304,12 @@ Replay the learned policy on a recorded match. The optional input events add you
 python -m clash_royale agent replay recordings/demo02.mp4 --states hud_data/demo02.states.jsonl --events hud_data/demo02.inputs.jsonl --policy runs/giant-graveyard/policy.json --report runs/giant-graveyard/replay.json --output-video runs/giant-graveyard/replay.mp4
 ```
 
+### Automatic play remains the goal
+
+The current commands stop at offline decision review. After HUD recognition, troop detection, action confirmation, and placement checks are reliable on held-out matches, add an executor behind the same observation and action interface. First run it in an authorized test environment with a stop control and complete decision logs. Once full matches finish without invalid or unconfirmed actions, collect outcomes and mistakes, update the policy between matches, and compare each update with the previous version before promoting it. This is the path to online learning; removing the earlier unvalidated click runner did not remove automatic play from the project goal.
+
+Supercell's [Safe and Fair Play Policy](https://supercell.com/en/safe-and-fair-play/) prohibits gameplay bots and automation scripts on its live service. Use an environment that explicitly permits automation for autonomous experiments.
+
 ## Source layout
 
 - `clash_royale/capture/` contains screen capture, recording, and the live preview.

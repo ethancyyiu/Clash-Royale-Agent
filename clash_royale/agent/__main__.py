@@ -19,8 +19,10 @@ from ..hud.calibration import Calibration
 from ..hud.recognition import HudRecognizer
 from .demonstrations import demos
 from .mouse import click, require_windows
-from .policy import Policy, card_name, distance, state_hand
+from .policy import Policy, card_name, state_hand
 from .replay import replay as replay_policy
+from .readiness import report as readiness_report
+from .simulator import benchmark
 
 
 def parse_args():
@@ -38,6 +40,17 @@ def parse_args():
     replay.add_argument("--calibration", type=Path, default=Path("hud_data/calibration.json"))
     replay.add_argument("--report", type=Path, required=True)
     replay.add_argument("--output-video", type=Path, help="save an MP4 with card and placement overlays")
+    simulate = commands.add_parser("simulate", help="benchmark offline in an abstract match environment")
+    simulate.add_argument("--policy", type=Path, help="learned policy; omit for the scripted baseline")
+    simulate.add_argument("--matches", type=int, default=9)
+    simulate.add_argument("--seed", type=int, default=0)
+    simulate.add_argument("--output", type=Path, required=True)
+    status = commands.add_parser("status", help="show missing offline-agent inputs and saved metrics")
+    status.add_argument("--calibration", type=Path, default=Path("hud_data/calibration.json"))
+    status.add_argument("--references", type=Path, default=Path("hud_data/references"))
+    status.add_argument("--holdout", type=Path, default=Path("runs/troops-v2/holdout.json"))
+    status.add_argument("--policy", type=Path)
+    status.add_argument("--simulation", type=Path)
     run = commands.add_parser("run", help="run in dry mode, or act with --execute")
     run.add_argument("--policy", type=Path, required=True)
     run.add_argument("--region-file", type=Path, required=True)
@@ -62,19 +75,20 @@ def learn(args):
     training = [sample for match in matches[:-1] for sample in match]
     if sum(sample["action"] is not None for sample in training) < 10:
         raise ValueError("Need at least ten confirmed training plays. Check hand-change and phase labels.")
-    policy = Policy(training)
+    policy = Policy(training, {"training_matches": [pair[0] for pair in args.demo[:-1]],
+                               "held_out_match": args.demo[-1][0],
+                               "confirmed_training_plays": sum(sample["action"] is not None for sample in training)})
     evaluated = correct = card_total = card_correct = 0
     for sample in matches[-1]:
-        # Compare against the closest historical state. Live safety constraints run separately.
-        nearest = min(training, key=lambda candidate: distance(candidate, sample))
-        predicted = nearest["action"]["card"] if nearest["action"] else None
+        action, _ = policy.decide_query(sample, recent_giant=sample.get("recent_giant", False))
+        predicted = action["card"] if action else None
         expected = sample["action"]["card"] if sample["action"] else None
         evaluated += 1
         correct += (predicted is None) == (expected is None)
         if expected is not None:
             card_total += 1
             card_correct += predicted == expected
-    print(f"Held-out nearest-example check: play/wait agreement {correct}/{evaluated}; card agreement {card_correct}/{card_total} plays")
+    print(f"Held-out policy check: play/wait agreement {correct}/{evaluated}; card agreement {card_correct}/{card_total} plays")
     policy.save(args.output)
     print(f"Saved {len(training)} learned examples to {args.output}")
 
@@ -167,6 +181,15 @@ def main():
                                    output_video=args.output_video)
             print(f"Replayed {result['frames']} frames: {result['bot_plays']} bot plays, "
                   f"{result['human_plays']} confirmed human plays; report in {args.report}")
+        elif args.command == "simulate":
+            result = benchmark(args.output, policy=Policy.load(args.policy) if args.policy else None,
+                               matches=args.matches, seed=args.seed)
+            print(f"Abstract simulator: {result['wins']} wins, {result['losses']} losses, "
+                  f"{result['draws']} draws; {result['invalid_actions']} invalid player actions. "
+                  f"Report in {args.output}")
+        elif args.command == "status":
+            print(json.dumps(readiness_report(args.calibration, args.references, args.holdout,
+                                              args.policy, args.simulation), indent=2))
         else:
             run(args)
     except (OSError, ValueError, RuntimeError) as error:

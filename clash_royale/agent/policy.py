@@ -71,25 +71,29 @@ def distance(left, right):
 
 
 class Policy:
-    def __init__(self, samples):
+    def __init__(self, samples, metadata=None):
         self.samples = samples
+        self.metadata = metadata or {}
 
     @classmethod
     def load(cls, path: Path):
         data = json.loads(path.read_text(encoding="utf-8"))
         if data.get("version") != 1 or not isinstance(data.get("samples"), list):
             raise ValueError("Invalid policy file")
-        return cls(data["samples"])
+        return cls(data["samples"], data.get("metadata"))
 
     def save(self, path: Path):
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("x", encoding="utf-8") as stream:
-            json.dump({"version": 1, "deck": DECK, "samples": self.samples}, stream)
+            json.dump({"version": 1, "deck": DECK, "metadata": self.metadata,
+                       "samples": self.samples}, stream)
 
     def decide(self, state, *, recent_giant=False):
         if not valid_state(state):
             return None, "unknown game state"
-        query = example(state)
+        return self.decide_query(example(state), recent_giant=recent_giant)
+
+    def decide_query(self, query, *, recent_giant=False):
         elixir, phase = query["elixir"], query["phase"]
         candidates = []
         for sample in self.samples:

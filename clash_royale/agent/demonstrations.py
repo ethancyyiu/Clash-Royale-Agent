@@ -56,6 +56,9 @@ def demos(states_path: Path, events_path: Path, calibration: dict, *, include_pl
             })))
         selected = None
     action_indices = [index for index, _ in plays]
+    giant_stamps = [timestamps[index] for index, sample in plays if sample["action"]["card"] == "Giant"]
+    for index, sample in plays:
+        sample["recent_giant"] = any(0 <= timestamps[index] - stamp <= 12_000_000_000 for stamp in giant_stamps)
     waits = []
     last = None
     for index, state in enumerate(states):
@@ -64,7 +67,9 @@ def demos(states_path: Path, events_path: Path, calibration: dict, *, include_pl
             continue
         if any(abs(stamp - timestamps[action_index]) < 1_500_000_000 for action_index in action_indices):
             continue
-        waits.append(example(state))
+        sample = example(state)
+        sample["recent_giant"] = any(0 <= stamp - giant_stamp <= 12_000_000_000 for giant_stamp in giant_stamps)
+        waits.append(sample)
         last = stamp
     samples = [item for _, item in plays] + waits
     return (samples, len(plays), plays) if include_plays else (samples, len(plays))

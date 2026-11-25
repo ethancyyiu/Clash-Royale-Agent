@@ -304,6 +304,15 @@ Replay the learned policy on a recorded match before using live input. The optio
 python -m clash_royale agent replay recordings/demo02.mp4 --states hud_data/demo02.states.jsonl --events hud_data/demo02.inputs.jsonl --policy runs/giant-graveyard/policy.json --report runs/giant-graveyard/replay.json --output-video runs/giant-graveyard/replay.mp4
 ```
 
+For offline development, `agent simulate` runs complete abstract matches against repeating rush, defensive, and random scripted opponents. It records every observation and action, tower health, illegal actions, and results. Use the same seed and match count when comparing policy versions. The simulator is deliberately simplified and its win rate does not predict Clash Royale results.
+
+```sh
+python -m clash_royale agent simulate --matches 9 --seed 0 --output runs/giant-graveyard/scripted-baseline.json
+python -m clash_royale agent simulate --policy runs/giant-graveyard/policy.json --matches 9 --seed 0 --output runs/giant-graveyard/simulation.json
+```
+
+Use `python -m clash_royale agent status` to see which calibration, reference, policy, and benchmark artifacts are still missing. Pass `--policy` and `--simulation` after creating those files.
+
 Run in dry mode first and inspect the JSONL decision log. `--execute` sends card and arena clicks to the emulator. Press Ctrl+C to stop. A play must be confirmed by a subsequent hand change before another play is sent. Practice matches are the right place to verify coordinates and behavior.
 
 ```sh

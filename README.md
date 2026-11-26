@@ -304,11 +304,18 @@ Replay the learned policy on a recorded match. The optional input events add you
 python -m clash_royale agent replay recordings/demo02.mp4 --states hud_data/demo02.states.jsonl --events hud_data/demo02.inputs.jsonl --policy runs/giant-graveyard/policy.json --report runs/giant-graveyard/replay.json --output-video runs/giant-graveyard/replay.mp4
 ```
 
-### Automatic play remains the goal
+### Automatic play and online learning
 
-The current commands stop at offline decision review. After HUD recognition, troop detection, action confirmation, and placement checks are reliable on held-out matches, add an executor behind the same observation and action interface. First run it in an authorized test environment with a stop control and complete decision logs. Once full matches finish without invalid or unconfirmed actions, collect outcomes and mistakes, update the policy between matches, and compare each update with the previous version before promoting it. This is the path to online learning; removing the earlier unvalidated click runner did not remove automatic play from the project goal.
+The project owner states they have personal authorization to implement and test automated play. The general [Safe and Fair Play Policy](https://supercell.com/en/safe-and-fair-play/) prohibits bots; this repository does not verify the individual authorization or its scope.
 
-Supercell's [Safe and Fair Play Policy](https://supercell.com/en/safe-and-fair-play/) prohibits gameplay bots and automation scripts on its live service. Use an environment that explicitly permits automation for autonomous experiments.
+`agent run` observes the live emulator and writes decisions to a new JSONL log. It starts in dry mode. Add `--execute` to click the card slot and arena position. It requires calibrated HUD regions, reference crops, a trained policy, and detector weights. Unknown observations cause it to wait. It also refuses crop-relative placements outside conservative card zones, waits for a hand change after each click, and stops if an action is not confirmed within three seconds. Press Ctrl+C to stop.
+
+```sh
+python -m clash_royale agent run --policy runs/giant-graveyard/policy.json --region-file hud_data/game_region.json --weights runs/troops-v2/weights/best.pt --log runs/giant-graveyard/dry-run.jsonl
+python -m clash_royale agent run --policy runs/giant-graveyard/policy.json --region-file hud_data/game_region.json --weights runs/troops-v2/weights/best.pt --log runs/giant-graveyard/live.jsonl --execute
+```
+
+Automatic play is the long-term goal. Online learning needs completed-match outcomes and reviewed errors in addition to action logs; copying the bot's own decisions back into its training set would not show whether they were good. After reliable full matches, add outcome collection and compare each candidate policy on held-out matches before replacing the active version.
 
 ## Source layout
 

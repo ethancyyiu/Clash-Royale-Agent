@@ -1,4 +1,4 @@
-"""Learn from recorded play and review policy decisions offline."""
+"""Learn from recorded play, review decisions, and run a saved policy."""
 from __future__ import annotations
 
 import argparse
@@ -9,10 +9,12 @@ from pathlib import Path
 from .demonstrations import demos
 from .policy import Policy
 from .replay import replay as replay_policy
+from .live import run as run_live
+from ..detection.detector import add_detector_options
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Learn and review a Giant Graveyard imitation policy offline.")
+    parser = argparse.ArgumentParser(description="Learn and run a Giant Graveyard imitation policy.")
     commands = parser.add_subparsers(dest="command", required=True)
     learn = commands.add_parser("learn", help="train from synchronized state and input event files")
     learn.add_argument("--demo", nargs=2, action="append", required=True, metavar=("STATES", "EVENTS"))
@@ -26,6 +28,15 @@ def parse_args():
     replay.add_argument("--calibration", type=Path, default=Path("hud_data/calibration.json"))
     replay.add_argument("--report", type=Path, required=True)
     replay.add_argument("--output-video", type=Path, help="save an MP4 with card and placement overlays")
+    run = commands.add_parser("run", help="observe live gameplay; add --execute to send emulator clicks")
+    run.add_argument("--policy", type=Path, required=True)
+    run.add_argument("--region-file", type=Path, required=True)
+    run.add_argument("--calibration", type=Path, default=Path("hud_data/calibration.json"))
+    run.add_argument("--references", type=Path, default=Path("hud_data/references"))
+    run.add_argument("--log", type=Path, required=True)
+    run.add_argument("--monitor", type=int, default=1)
+    run.add_argument("--execute", action="store_true")
+    add_detector_options(run, required=True)
     return parser.parse_args()
 
 
@@ -70,6 +81,11 @@ def main():
                                    output_video=args.output_video)
             print(f"Replayed {result['frames']} frames: {result['bot_plays']} bot plays, "
                   f"{result['human_plays']} confirmed human plays; report in {args.report}")
+        elif args.command == "run":
+            run_live(policy_path=args.policy, region_file=args.region_file,
+                     calibration_path=args.calibration, references=args.references,
+                     weights=args.weights, log_path=args.log, monitor=args.monitor,
+                     execute=args.execute, device=args.device, imgsz=args.imgsz, conf=args.conf)
         else:
             raise ValueError(f"Unknown agent command: {args.command}")
     except (OSError, ValueError, RuntimeError) as error:

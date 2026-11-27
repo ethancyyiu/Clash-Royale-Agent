@@ -1,0 +1,10 @@
+{
+  "match_id": "match-0d2615854bc6cfd3",
+  "video_filename": "match07.mp4",
+  "video_sha256": "0d2615854bc6cfd3a8abfe0e7f8c9405329b810c7c6dffa81c04f885b152e8c2",
+  "frame_index": 2700,
+  "video_timestamp_ns": 90000000000,
+  "capture_monotonic_ns": 331228984000000,
+  "width": 512,
+  "height": 902
+}

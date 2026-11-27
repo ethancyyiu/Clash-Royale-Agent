@@ -1,0 +1,310 @@
+{
+  "version": 1,
+  "based_on_commit": "e8144df",
+  "status": "Machine-assisted correction pass: 55 screened samples retained, 56 uncertain samples withheld. The retained labels are not a fully hand-verified gold standard.",
+  "quarantined_frames": {
+    "7": [
+      2460,
+      3420,
+      3660,
+      3900,
+      4140,
+      4380,
+      4560,
+      5100,
+      5400,
+      5640
+    ],
+    "8": [
+      780,
+      960,
+      1320,
+      2040,
+      2100,
+      2160,
+      2220,
+      2340,
+      2580,
+      2640,
+      2700,
+      2880
+    ],
+    "9": [
+      1260,
+      1440,
+      1920,
+      2100,
+      2280,
+      2520,
+      2700,
+      2880,
+      3000,
+      3120,
+      3240,
+      3360,
+      3720,
+      3840,
+      3960,
+      4140,
+      4320,
+      4500,
+      4680,
+      4860,
+      4980
+    ],
+    "10": [
+      1020,
+      1200,
+      2820,
+      3000,
+      3120,
+      3240,
+      3480,
+      3600,
+      3720,
+      3900,
+      4080,
+      4500,
+      4680
+    ]
+  },
+  "corrections": [
+    {
+      "match": 7,
+      "frame": 960,
+      "removed": 0,
+      "added": 1
+    },
+    {
+      "match": 7,
+      "frame": 1200,
+      "removed": 2,
+      "added": 0
+    },
+    {
+      "match": 7,
+      "frame": 1560,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 7,
+      "frame": 2700,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 7,
+      "frame": 2880,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 7,
+      "frame": 3120,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 8,
+      "frame": 840,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 8,
+      "frame": 1080,
+      "removed": 1,
+      "added": 1
+    },
+    {
+      "match": 8,
+      "frame": 1200,
+      "removed": 2,
+      "added": 0
+    },
+    {
+      "match": 8,
+      "frame": 1500,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 8,
+      "frame": 1860,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 8,
+      "frame": 2760,
+      "removed": 0,
+      "added": 1
+    },
+    {
+      "match": 9,
+      "frame": 0,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 1080,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 10,
+      "frame": 600,
+      "removed": 0,
+      "added": 1
+    },
+    {
+      "match": 10,
+      "frame": 840,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 10,
+      "frame": 1800,
+      "removed": 0,
+      "added": 1
+    },
+    {
+      "match": 10,
+      "frame": 2160,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 10,
+      "frame": 2280,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 10,
+      "frame": 2400,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 10,
+      "frame": 3360,
+      "removed": 1,
+      "added": 0
+    }
+  ],
+  "matches": {
+    "match07": {
+      "source_video": "match07.mp4",
+      "source_sha256": "0d2615854bc6cfd3a8abfe0e7f8c9405329b810c7c6dffa81c04f885b152e8c2",
+      "match_id": "match-0d2615854bc6cfd3",
+      "screened_frames": [
+        120,
+        300,
+        480,
+        720,
+        960,
+        1200,
+        1380,
+        1560,
+        1740,
+        1980,
+        2220,
+        2700,
+        2880,
+        3120,
+        4860
+      ],
+      "screened_boxes": 37
+    },
+    "match08": {
+      "source_video": "match08.mp4",
+      "source_sha256": "f31ffdf134ef9c84d196cc95f1a1b999d1763d99be83cef36200c72739ad6b42",
+      "match_id": "match-f31ffdf134ef9c84",
+      "screened_frames": [
+        60,
+        240,
+        420,
+        540,
+        720,
+        840,
+        1080,
+        1200,
+        1260,
+        1440,
+        1500,
+        1620,
+        1740,
+        1860,
+        2400,
+        2760
+      ],
+      "screened_boxes": 40
+    },
+    "match09": {
+      "source_video": "match09.mp4",
+      "source_sha256": "2722bc6a6304a03193c51367a695a8951b797725822839bd1f9440a9725bdc5e",
+      "match_id": "match-2722bc6a6304a031",
+      "screened_frames": [
+        0,
+        240,
+        420,
+        600,
+        780,
+        1080,
+        1740,
+        3540
+      ],
+      "screened_boxes": 10
+    },
+    "match10": {
+      "source_video": "match10.mp4",
+      "source_sha256": "cba941ada9db8f45ad7d206e5debe0cfdce186af53ded46d98ee49558b5d5d32",
+      "match_id": "match-cba941ada9db8f45",
+      "screened_frames": [
+        60,
+        240,
+        420,
+        600,
+        840,
+        1440,
+        1620,
+        1800,
+        1980,
+        2160,
+        2280,
+        2400,
+        2640,
+        3360,
+        4260,
+        4380
+      ],
+      "screened_boxes": 25
+    }
+  },
+  "reserved_test_matches": [
+    "match05_redo",
+    "match06"
+  ],
+  "hud_calibration_performed": false,
+  "summary": {
+    "screened_frames": 55,
+    "withheld_frames": 56,
+    "troop_boxes": 112
+  },
+  "troop_classes": [
+    "Friendly troop",
+    "Enemy troop"
+  ],
+  "dataset_classes": [
+    "Friendly troop",
+    "Enemy troop",
+    "Friendly tower",
+    "Enemy tower",
+    "Card",
+    "Other / unknown"
+  ]
+}

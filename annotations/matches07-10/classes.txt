@@ -1,0 +1,6 @@
+Friendly troop
+Enemy troop
+Friendly tower
+Enemy tower
+Card
+Other / unknown

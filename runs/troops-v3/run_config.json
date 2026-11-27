@@ -1,0 +1,20 @@
+{
+  "model": "runs/troops-v2/weights/best.pt",
+  "ultralytics": "8.4.216",
+  "training": {
+    "data": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v3\\dataset\\data.yaml",
+    "epochs": 5,
+    "imgsz": 416,
+    "batch": 8,
+    "device": "cpu",
+    "project": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs",
+    "name": "troops-v3",
+    "exist_ok": true,
+    "pretrained": true,
+    "save": true,
+    "workers": 0,
+    "cache": "ram",
+    "freeze": 10,
+    "mosaic": 0
+  }
+}

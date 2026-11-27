@@ -1,0 +1,4 @@
+path: "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v3\\dataset"
+train: train.txt
+val: val.txt
+names: ["friendly_troop", "enemy_troop"]

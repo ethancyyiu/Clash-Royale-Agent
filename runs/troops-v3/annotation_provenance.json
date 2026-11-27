@@ -1,0 +1,167 @@
+{
+  "annotation_method": "YOLO troops-v2 draft at 0.16 confidence with arena crop; visual spot review and corrections, not full manual verification",
+  "matches": {
+    "match07": {
+      "match_id": "match-0d2615854bc6cfd3",
+      "source_sha256": "0d2615854bc6cfd3a8abfe0e7f8c9405329b810c7c6dffa81c04f885b152e8c2",
+      "labelled_gameplay_frames": 25,
+      "draft_boxes_after_corrections": 103
+    },
+    "match08": {
+      "match_id": "match-f31ffdf134ef9c84",
+      "source_sha256": "f31ffdf134ef9c84d196cc95f1a1b999d1763d99be83cef36200c72739ad6b42",
+      "labelled_gameplay_frames": 28,
+      "draft_boxes_after_corrections": 111
+    },
+    "match09": {
+      "match_id": "match-2722bc6a6304a031",
+      "source_sha256": "2722bc6a6304a03193c51367a695a8951b797725822839bd1f9440a9725bdc5e",
+      "labelled_gameplay_frames": 29,
+      "draft_boxes_after_corrections": 164
+    },
+    "match10": {
+      "match_id": "match-cba941ada9db8f45",
+      "source_sha256": "cba941ada9db8f45ad7d206e5debe0cfdce186af53ded46d98ee49558b5d5d32",
+      "labelled_gameplay_frames": 29,
+      "draft_boxes_after_corrections": 97
+    }
+  },
+  "excluded_post_match_frames": {
+    "7": [
+      5820,
+      5940,
+      6180,
+      6540,
+      6900
+    ],
+    "8": [
+      2820,
+      2940
+    ],
+    "9": [
+      5100
+    ],
+    "10": [
+      4860
+    ]
+  },
+  "corrections": [
+    {
+      "match": 7,
+      "frame": 720,
+      "removed": 0,
+      "added": 1
+    },
+    {
+      "match": 9,
+      "frame": 420,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 600,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 780,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 1080,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 2100,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 2280,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 3000,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 3120,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 3240,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 4320,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 9,
+      "frame": 4500,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 10,
+      "frame": 4380,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "match": 10,
+      "frame": 4680,
+      "removed": 1,
+      "added": 0
+    }
+  ],
+  "validation_match_ids": [
+    "match-f381ad78d798fcc8"
+  ],
+  "test_matches_reserved": [
+    "match05_redo",
+    "match06"
+  ],
+  "test_dataset": "dataset/holdout",
+  "hud_calibration_performed": false,
+  "training_limitations": "Machine-assisted labels were spot reviewed, not fully hand verified; evaluate against reserved matches before promoting this checkpoint.",
+  "training_runtime": "Ultralytics label-cache ThreadPool replaced with sequential map at runtime because Windows sandbox denied named-pipe creation.",
+  "holdout_comparison": {
+    "v2": {
+      "precision": 0.508878,
+      "recall": 0.467324,
+      "mAP50": 0.388824,
+      "mAP75": 0.036687,
+      "mAP50-95": 0.119768
+    },
+    "v3": {
+      "precision": 0.519527,
+      "recall": 0.499634,
+      "mAP50": 0.473641,
+      "mAP75": 0.06133,
+      "mAP50-95": 0.165829
+    },
+    "review_threshold": 0.25,
+    "unmatched_detections": {
+      "v2": 113,
+      "v3": 191
+    }
+  },
+  "promotion_decision": "Keep v2 as active gameplay checkpoint: v3 improves mAP but yields more unmatched detections, and new training labels need full manual review."
+}

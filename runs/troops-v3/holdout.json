@@ -1,0 +1,2530 @@
+{
+  "weights": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v3\\weights\\best.pt",
+  "ultralytics": "8.4.216",
+  "validation": {
+    "device": "cpu",
+    "imgsz": 640,
+    "batch": 1,
+    "split": "val",
+    "plots": false,
+    "conf": 0.001,
+    "workers": 0
+  },
+  "overall": {
+    "precision": 0.5195267039464333,
+    "recall": 0.499633825873433,
+    "mAP50": 0.4736412868977261,
+    "mAP50-95": 0.16582936959895206,
+    "mAP75": 0.06133001405027837
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "name": "friendly_troop",
+      "instances": 167,
+      "precision": 0.45320344212535646,
+      "recall": 0.6107784431137725,
+      "mAP50": 0.5405951408709747,
+      "mAP50-95": 0.20528519157871578,
+      "mAP75": 0.0968546661396988
+    },
+    {
+      "class_id": 1,
+      "name": "enemy_troop",
+      "instances": 139,
+      "precision": 0.58584996576751,
+      "recall": 0.38848920863309355,
+      "mAP50": 0.4066874329244775,
+      "mAP50-95": 0.1263735476191883,
+      "mAP75": 0.02580536196085794
+    }
+  ],
+  "latency_ms_per_image": {
+    "preprocess": 1.3682482167496346,
+    "inference": 94.48550892661193,
+    "loss": 0.0015303563226812652,
+    "postprocess": 1.065500000549946,
+    "preprocess_inference_postprocess": 96.91925714391151
+  },
+  "holdout": {
+    "dataset_sha256": "443699fba3ccd356a77a79a94a4247afdc8f1fc1247ebb0caf42bc7c688ecca7",
+    "matches": {
+      "match-2adf1878ec71a389": {
+        "images": 30,
+        "issues": {
+          "loose_box": 51,
+          "missed": 63,
+          "extra": 81,
+          "wrong_team": 2
+        }
+      },
+      "match-dca5c5b70d4402d5": {
+        "images": 26,
+        "issues": {
+          "loose_box": 67,
+          "missed": 74,
+          "extra": 110
+        }
+      }
+    },
+    "review_confidence": 0.25,
+    "per_class_at_review_confidence": {
+      "friendly_troop": {
+        "labels": 167,
+        "predictions": 251,
+        "true_positives": 106,
+        "precision": 0.42231075697211157,
+        "recall": 0.6347305389221557
+      },
+      "enemy_troop": {
+        "labels": 139,
+        "predictions": 109,
+        "true_positives": 61,
+        "precision": 0.5596330275229358,
+        "recall": 0.43884892086330934
+      }
+    }
+  },
+  "flagged_frames": [
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 720,
+      "video_timestamp_ns": 24000000000,
+      "capture_monotonic_ns": 79077234000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (114, 357, 154, 392) has IoU 0.75 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (353, 358, 386, 396)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (320, 296, 365, 335)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (266, 678, 330, 740) (confidence 0.85)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (289, 677, 330, 732) (confidence 0.48)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 1020,
+      "video_timestamp_ns": 34000000000,
+      "capture_monotonic_ns": 79087656000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (343, 468, 396, 514) has IoU 0.71 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (331, 543, 386, 595) has IoU 0.70 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (135, 388, 159, 409) has IoU 0.64 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (241, 538, 281, 588) has IoU 0.57 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (138, 507, 168, 529) has IoU 0.54 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (113, 503, 135, 527)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (107, 483, 128, 506)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (109, 454, 130, 478)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (137, 457, 154, 479)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (151, 421, 172, 451)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (126, 423, 148, 445)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (143, 491, 171, 525) (confidence 0.29)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (103, 486, 134, 524) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (113, 450, 152, 489) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (147, 490, 171, 519) (confidence 0.26)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (129, 416, 171, 450) (confidence 0.26)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (140, 496, 169, 536) (confidence 0.26)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 1200,
+      "video_timestamp_ns": 40000000000,
+      "capture_monotonic_ns": 79093890000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (255, 524, 295, 575) has IoU 0.74 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (337, 530, 384, 589) has IoU 0.73 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (165, 488, 192, 521) has IoU 0.59 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (360, 307, 384, 328)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (362, 278, 384, 299)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (382, 283, 408, 303)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (408, 285, 433, 311)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (408, 314, 430, 340)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (382, 319, 408, 350)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (140, 476, 165, 505)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (143, 479, 194, 526) (confidence 0.37)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (256, 535, 299, 580) (confidence 0.28)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 1320,
+      "video_timestamp_ns": 44000000000,
+      "capture_monotonic_ns": 79098031000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (315, 479, 336, 503) has IoU 0.68 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (348, 474, 395, 524) has IoU 0.66 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (329, 458, 355, 500) has IoU 0.60 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (336, 507, 367, 538)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (342, 506, 360, 526) (confidence 0.37)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (331, 439, 360, 479) (confidence 0.36)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (329, 443, 370, 515) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (324, 443, 353, 504) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (343, 469, 379, 518) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (332, 435, 368, 473) (confidence 0.26)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 1500,
+      "video_timestamp_ns": 50000000000,
+      "capture_monotonic_ns": 79104281000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (295, 389, 320, 414) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (319, 373, 344, 424) has IoU 0.53 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (347, 376, 394, 419)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (366, 416, 407, 471) (confidence 0.49)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (382, 358, 421, 409) (confidence 0.32)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (365, 420, 407, 470) (confidence 0.29)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 1680,
+      "video_timestamp_ns": 56000000000,
+      "capture_monotonic_ns": 79110500000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (336, 410, 358, 438)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (336, 375, 372, 414)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 1860,
+      "video_timestamp_ns": 62000000000,
+      "capture_monotonic_ns": 79116703000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (381, 457, 420, 516) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (381, 469, 424, 513) (confidence 0.35)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 2040,
+      "video_timestamp_ns": 68000000000,
+      "capture_monotonic_ns": 79122953000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (257, 685, 322, 748) has IoU 0.72 with the prediction."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 2220,
+      "video_timestamp_ns": 74000000000,
+      "capture_monotonic_ns": 79129140000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (292, 605, 361, 664)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (302, 593, 355, 649) (confidence 0.89)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 2400,
+      "video_timestamp_ns": 80000000000,
+      "capture_monotonic_ns": 79135453000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (429, 596, 457, 624)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (439, 623, 464, 651)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (416, 601, 469, 662) (confidence 0.55)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (427, 601, 468, 656) (confidence 0.53)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (429, 619, 468, 669) (confidence 0.40)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (432, 634, 466, 669) (confidence 0.28)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 2580,
+      "video_timestamp_ns": 86000000000,
+      "capture_monotonic_ns": 79141765000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (337, 402, 382, 450) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (299, 288, 322, 317) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (268, 302, 299, 331) has IoU 0.54 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (386, 407, 416, 430)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (374, 424, 398, 443)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (323, 292, 347, 326)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (330, 328, 354, 357)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (335, 388, 398, 446) (confidence 0.63)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (324, 292, 482, 377) (confidence 0.39)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 2760,
+      "video_timestamp_ns": 92000000000,
+      "capture_monotonic_ns": 79148000000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (392, 335, 420, 365) has IoU 0.66 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (412, 228, 427, 252)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (429, 244, 447, 268)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (433, 273, 453, 302)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (444, 297, 464, 327)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (371, 342, 391, 369)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (331, 327, 357, 358)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (370, 340, 402, 378) (confidence 0.49)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (382, 328, 424, 373) (confidence 0.36)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (301, 261, 357, 312) (confidence 0.31)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (416, 322, 434, 347) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (337, 300, 387, 352) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (343, 300, 371, 341) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (382, 346, 406, 381) (confidence 0.25)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (438, 284, 463, 308) (confidence 0.25)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 2880,
+      "video_timestamp_ns": 96000000000,
+      "capture_monotonic_ns": 79152234000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (341, 307, 410, 362) has IoU 0.73 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (306, 258, 355, 303) has IoU 0.59 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (322, 316, 353, 350) has IoU 0.54 with the prediction."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (355, 308, 407, 366) (confidence 0.57)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (394, 303, 445, 353) (confidence 0.38)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 3060,
+      "video_timestamp_ns": 102000000000,
+      "capture_monotonic_ns": 79158500000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (319, 235, 384, 280) has IoU 0.70 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (343, 271, 378, 304)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 3480,
+      "video_timestamp_ns": 116000000000,
+      "capture_monotonic_ns": 79173171000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (326, 255, 362, 309)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (119, 438, 178, 501) (confidence 0.42)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (244, 709, 303, 758) (confidence 0.40)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 3660,
+      "video_timestamp_ns": 122000000000,
+      "capture_monotonic_ns": 79179312000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (133, 366, 166, 407) has IoU 0.74 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (183, 562, 210, 592) has IoU 0.71 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (203, 593, 234, 629) has IoU 0.63 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (337, 379, 379, 431) has IoU 0.61 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (133, 557, 157, 583) has IoU 0.60 with the prediction."
+        },
+        {
+          "kind": "wrong_team",
+          "message": "enemy_troop labelled at (99, 507, 128, 540), predicted as friendly_troop (IoU 0.52, confidence 0.56)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (347, 506, 368, 533)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (351, 529, 370, 557)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (327, 576, 362, 616)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (327, 609, 346, 640)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (128, 489, 152, 523)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (72, 512, 96, 554)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (67, 596, 104, 632) (confidence 0.73)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (55, 514, 101, 568) (confidence 0.70)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (103, 471, 156, 531) (confidence 0.63)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (209, 587, 231, 622) (confidence 0.56)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (91, 470, 157, 522) (confidence 0.56)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (76, 486, 99, 512) (confidence 0.54)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (346, 510, 374, 546) (confidence 0.47)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (54, 522, 97, 575) (confidence 0.44)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (183, 557, 211, 621) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (102, 474, 125, 501) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (344, 513, 373, 561) (confidence 0.29)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (124, 471, 151, 500) (confidence 0.26)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (81, 525, 101, 556) (confidence 0.25)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 3780,
+      "video_timestamp_ns": 126000000000,
+      "capture_monotonic_ns": 79183531000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (190, 583, 224, 623) has IoU 0.66 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (368, 536, 385, 565) has IoU 0.64 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (127, 417, 158, 465) has IoU 0.61 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (168, 558, 205, 592) has IoU 0.53 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (141, 496, 178, 534)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (96, 510, 134, 545)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (76, 498, 109, 526)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (329, 397, 375, 445)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (372, 397, 403, 441)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (375, 513, 399, 541)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (165, 547, 226, 622) (confidence 0.71)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (337, 374, 403, 447) (confidence 0.59)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (330, 509, 374, 558) (confidence 0.54)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (170, 570, 227, 624) (confidence 0.51)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (367, 539, 386, 559) (confidence 0.49)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (85, 496, 137, 558) (confidence 0.44)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (330, 515, 362, 558) (confidence 0.39)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (139, 481, 176, 521) (confidence 0.29)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (360, 425, 393, 460) (confidence 0.26)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 3960,
+      "video_timestamp_ns": 132000000000,
+      "capture_monotonic_ns": 79189734000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (141, 395, 193, 441) has IoU 0.63 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (114, 461, 161, 503) has IoU 0.60 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (362, 389, 403, 433) has IoU 0.59 with the prediction."
+        },
+        {
+          "kind": "wrong_team",
+          "message": "friendly_troop labelled at (344, 414, 368, 438), predicted as enemy_troop (IoU 0.77, confidence 0.36)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (135, 568, 168, 600)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (143, 551, 209, 601) (confidence 0.62)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (135, 557, 182, 602) (confidence 0.39)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 4080,
+      "video_timestamp_ns": 136000000000,
+      "capture_monotonic_ns": 79193921000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (93, 464, 154, 513) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (391, 426, 417, 457) (confidence 0.26)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 4200,
+      "video_timestamp_ns": 140000000000,
+      "capture_monotonic_ns": 79198046000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (126, 495, 179, 544) has IoU 0.64 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (192, 226, 233, 272)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 4320,
+      "video_timestamp_ns": 144000000000,
+      "capture_monotonic_ns": 79202156000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (316, 271, 358, 319) has IoU 0.73 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (157, 323, 193, 372) has IoU 0.68 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (144, 282, 179, 327)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (142, 271, 177, 307) (confidence 0.33)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 4500,
+      "video_timestamp_ns": 150000000000,
+      "capture_monotonic_ns": 79208406000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (116, 440, 162, 486) has IoU 0.62 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (114, 327, 150, 373)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (137, 347, 168, 389)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (104, 479, 128, 510)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (119, 434, 170, 497) (confidence 0.62)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (106, 451, 126, 475) (confidence 0.43)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (166, 449, 193, 507) (confidence 0.39)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (128, 444, 187, 509) (confidence 0.39)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (162, 455, 194, 515) (confidence 0.39)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (118, 328, 173, 378) (confidence 0.38)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (133, 456, 175, 509) (confidence 0.34)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (116, 341, 173, 412) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (181, 434, 218, 471) (confidence 0.28)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 4740,
+      "video_timestamp_ns": 158000000000,
+      "capture_monotonic_ns": 79216750000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (102, 345, 171, 414) has IoU 0.65 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (71, 395, 127, 452) has IoU 0.61 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (343, 407, 364, 441)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (368, 413, 394, 447)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (99, 317, 133, 362)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (140, 340, 186, 389)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 4860,
+      "video_timestamp_ns": 162000000000,
+      "capture_monotonic_ns": 79220906000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (142, 464, 185, 517) has IoU 0.71 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (274, 365, 302, 406) has IoU 0.71 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (199, 319, 230, 357) has IoU 0.70 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (123, 462, 145, 495) has IoU 0.65 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (90, 396, 155, 443) has IoU 0.58 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (140, 334, 173, 393) has IoU 0.57 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (303, 366, 346, 407)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (258, 354, 281, 388)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (255, 319, 278, 352)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (228, 311, 255, 344)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (116, 320, 145, 364)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (245, 309, 283, 358) (confidence 0.56)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (257, 356, 302, 402) (confidence 0.33)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (308, 375, 335, 411) (confidence 0.29)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (198, 306, 256, 360) (confidence 0.28)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 4980,
+      "video_timestamp_ns": 166000000000,
+      "capture_monotonic_ns": 79225078000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (334, 334, 368, 378) has IoU 0.61 with the prediction."
+        }
+      ]
+    },
+    {
+      "match_id": "match-2adf1878ec71a389",
+      "video_filename": "match06.mp4",
+      "video_sha256": "2adf1878ec71a389fbbe01aee1fc03042bf93a4f32fe980c754635370e3da179",
+      "frame_index": 5160,
+      "video_timestamp_ns": 172000000000,
+      "capture_monotonic_ns": 79231359000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (145, 361, 171, 404) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (92, 350, 111, 388)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (96, 364, 157, 395)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (101, 356, 175, 421) (confidence 0.35)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (92, 339, 123, 372) (confidence 0.35)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (133, 353, 173, 405) (confidence 0.34)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 720,
+      "video_timestamp_ns": 24000000000,
+      "capture_monotonic_ns": 74923937000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (44, 249, 89, 300) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (73, 665, 95, 717) has IoU 0.58 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (107, 669, 130, 693) has IoU 0.53 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (58, 674, 66, 695)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (56, 670, 77, 699) (confidence 0.58)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (76, 659, 102, 701) (confidence 0.48)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (84, 706, 103, 728) (confidence 0.40)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (114, 675, 132, 697) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (46, 701, 68, 728) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (74, 679, 102, 717) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (63, 657, 103, 708) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (108, 700, 134, 735) (confidence 0.26)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 1080,
+      "video_timestamp_ns": 36000000000,
+      "capture_monotonic_ns": 74936578000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (197, 505, 234, 540) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (95, 517, 137, 558) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (176, 541, 212, 578) has IoU 0.65 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (223, 541, 260, 576) has IoU 0.62 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (113, 407, 140, 426) has IoU 0.60 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (176, 348, 221, 385) has IoU 0.55 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (110, 428, 137, 451)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (195, 507, 233, 579) (confidence 0.30)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 1320,
+      "video_timestamp_ns": 44000000000,
+      "capture_monotonic_ns": 74944796000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (32, 561, 69, 585) has IoU 0.63 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (131, 417, 181, 458) has IoU 0.61 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (190, 437, 233, 474)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (103, 450, 131, 475)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (35, 468, 63, 485)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (34, 513, 62, 536)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (165, 550, 197, 583)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (160, 535, 207, 582) (confidence 0.76)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (189, 414, 240, 468) (confidence 0.52)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (108, 444, 145, 482) (confidence 0.47)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (157, 505, 191, 541) (confidence 0.37)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (93, 498, 127, 526) (confidence 0.33)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 1560,
+      "video_timestamp_ns": 52000000000,
+      "capture_monotonic_ns": 74953109000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (104, 454, 116, 475)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (124, 450, 144, 476)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (107, 409, 135, 450)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (56, 286, 116, 378)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (73, 434, 103, 469) (confidence 0.42)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (100, 396, 146, 449) (confidence 0.36)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (98, 461, 125, 499) (confidence 0.36)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (98, 451, 129, 498) (confidence 0.26)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 1920,
+      "video_timestamp_ns": 64000000000,
+      "capture_monotonic_ns": 74965562000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (152, 600, 196, 655) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (305, 288, 485, 377) (confidence 0.42)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (348, 309, 485, 377) (confidence 0.27)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 2220,
+      "video_timestamp_ns": 74000000000,
+      "capture_monotonic_ns": 74976062000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (350, 307, 412, 364) has IoU 0.65 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (394, 186, 434, 221)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (338, 304, 358, 330) (confidence 0.25)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 2640,
+      "video_timestamp_ns": 88000000000,
+      "capture_monotonic_ns": 74990609000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (379, 423, 419, 465) has IoU 0.56 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (336, 419, 374, 461)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (335, 403, 423, 470) (confidence 0.65)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 3180,
+      "video_timestamp_ns": 106000000000,
+      "capture_monotonic_ns": 75009359000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (45, 354, 106, 400) has IoU 0.62 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (306, 242, 336, 282)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 3480,
+      "video_timestamp_ns": 116000000000,
+      "capture_monotonic_ns": 75019765000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (147, 560, 168, 591) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (140, 368, 200, 434) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (113, 450, 171, 499) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (185, 514, 214, 558)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (207, 424, 233, 459)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (134, 498, 152, 517)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (59, 403, 117, 476)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (52, 488, 113, 529)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (206, 508, 232, 553) (confidence 0.41)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (165, 531, 186, 559) (confidence 0.40)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (167, 532, 191, 565) (confidence 0.33)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (182, 547, 215, 591) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (181, 498, 206, 529) (confidence 0.29)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 3780,
+      "video_timestamp_ns": 126000000000,
+      "capture_monotonic_ns": 75030640000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (85, 459, 117, 490) has IoU 0.57 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (80, 537, 117, 567) has IoU 0.54 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (102, 505, 127, 529)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (135, 512, 154, 530)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (118, 438, 176, 503) (confidence 0.35)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 4200,
+      "video_timestamp_ns": 140000000000,
+      "capture_monotonic_ns": 75045296000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (200, 461, 257, 514) has IoU 0.73 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (243, 616, 305, 657) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (285, 534, 312, 565)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (273, 576, 307, 613) (confidence 0.49)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (272, 528, 316, 573) (confidence 0.44)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (242, 600, 293, 653) (confidence 0.35)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (243, 568, 275, 606) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (281, 579, 310, 609) (confidence 0.27)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 4560,
+      "video_timestamp_ns": 152000000000,
+      "capture_monotonic_ns": 75057765000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (298, 252, 324, 295) has IoU 0.68 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (161, 289, 230, 347) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (188, 209, 210, 241) has IoU 0.55 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (295, 176, 322, 202)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (289, 214, 312, 241)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (145, 247, 196, 289)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (76, 271, 140, 316)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (343, 436, 386, 496) (confidence 0.57)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 4860,
+      "video_timestamp_ns": 162000000000,
+      "capture_monotonic_ns": 75068375000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (183, 358, 233, 413) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (228, 290, 278, 328) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (303, 385, 348, 445) has IoU 0.68 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (137, 428, 188, 479)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (289, 242, 337, 279)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (178, 688, 206, 725) (confidence 0.46)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (175, 666, 200, 689) (confidence 0.35)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (134, 706, 160, 743) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (176, 667, 203, 696) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (183, 715, 205, 742) (confidence 0.26)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 5160,
+      "video_timestamp_ns": 172000000000,
+      "capture_monotonic_ns": 75078812000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (133, 536, 155, 568) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (135, 624, 186, 681) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (285, 493, 317, 536) has IoU 0.63 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (176, 560, 230, 596) has IoU 0.58 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (323, 400, 362, 434) has IoU 0.51 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (368, 489, 426, 560)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (176, 445, 231, 498)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (312, 464, 344, 495)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (120, 565, 158, 602)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (116, 488, 153, 530) (confidence 0.63)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (142, 626, 179, 683) (confidence 0.51)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (125, 563, 148, 592) (confidence 0.44)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 5520,
+      "video_timestamp_ns": 184000000000,
+      "capture_monotonic_ns": 75091312000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (401, 531, 444, 589) has IoU 0.74 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (274, 616, 302, 651) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (377, 459, 398, 489) has IoU 0.67 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (142, 583, 169, 610) has IoU 0.64 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (296, 653, 334, 682) has IoU 0.59 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (385, 499, 399, 523) has IoU 0.57 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (367, 483, 389, 506)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (131, 610, 157, 634)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (150, 512, 193, 561)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (183, 540, 243, 592) (confidence 0.49)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (127, 543, 157, 579) (confidence 0.44)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (368, 486, 396, 518) (confidence 0.35)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (87, 540, 127, 584) (confidence 0.33)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (187, 627, 212, 655) (confidence 0.32)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (404, 513, 423, 539) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (403, 515, 428, 547) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (377, 532, 399, 561) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (101, 611, 147, 664) (confidence 0.27)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 5820,
+      "video_timestamp_ns": 194000000000,
+      "capture_monotonic_ns": 75101687000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (268, 613, 303, 648) has IoU 0.73 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (158, 478, 212, 540)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (63, 488, 124, 552)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (231, 522, 261, 566) (confidence 0.59)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (221, 568, 275, 626) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (345, 392, 363, 418) (confidence 0.29)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (73, 475, 122, 528) (confidence 0.29)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (191, 493, 215, 522) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (264, 606, 299, 650) (confidence 0.28)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 6120,
+      "video_timestamp_ns": 204000000000,
+      "capture_monotonic_ns": 75112156000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (179, 674, 212, 730) has IoU 0.56 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (348, 474, 394, 505)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (200, 571, 260, 637)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (154, 561, 205, 616)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (354, 513, 395, 538)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (353, 538, 395, 571)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (134, 660, 158, 698)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (339, 462, 400, 518) (confidence 0.82)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (356, 513, 392, 569) (confidence 0.70)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (165, 639, 192, 670) (confidence 0.63)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (160, 537, 204, 598) (confidence 0.52)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (337, 467, 385, 511) (confidence 0.50)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (168, 721, 195, 759) (confidence 0.42)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (138, 668, 162, 693) (confidence 0.40)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 6420,
+      "video_timestamp_ns": 214000000000,
+      "capture_monotonic_ns": 75122609000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (148, 610, 192, 644) has IoU 0.62 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (323, 558, 355, 588) has IoU 0.51 with the prediction."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (339, 585, 365, 614) (confidence 0.35)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 6720,
+      "video_timestamp_ns": 224000000000,
+      "capture_monotonic_ns": 75133218000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (344, 390, 379, 419) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (111, 397, 164, 431)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (331, 369, 357, 397)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (362, 368, 399, 397)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (199, 254, 221, 288)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (183, 207, 200, 221)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (207, 441, 292, 530) (confidence 0.66)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (327, 356, 371, 400) (confidence 0.40)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (326, 358, 377, 413) (confidence 0.25)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 7080,
+      "video_timestamp_ns": 236000000000,
+      "capture_monotonic_ns": 75145734000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (312, 706, 341, 734) has IoU 0.73 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (355, 668, 384, 700) has IoU 0.58 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (305, 653, 347, 715) has IoU 0.54 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (133, 321, 168, 355)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (281, 254, 329, 303)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (361, 321, 392, 359)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (41, 180, 111, 228)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (307, 707, 340, 747) (confidence 0.72)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (129, 302, 176, 361) (confidence 0.43)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (294, 681, 315, 712) (confidence 0.42)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (315, 662, 339, 696) (confidence 0.34)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (356, 674, 394, 718) (confidence 0.34)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 7380,
+      "video_timestamp_ns": 246000000000,
+      "capture_monotonic_ns": 75156281000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (262, 520, 317, 579) has IoU 0.72 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (183, 423, 250, 472) has IoU 0.70 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (286, 376, 346, 428) has IoU 0.68 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (385, 499, 413, 523) has IoU 0.55 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (113, 550, 164, 586) has IoU 0.54 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (95, 338, 166, 388)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (117, 530, 158, 548)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (69, 228, 126, 306)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (340, 545, 376, 581) (confidence 0.57)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (335, 512, 356, 539) (confidence 0.36)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (112, 345, 153, 389) (confidence 0.27)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 7740,
+      "video_timestamp_ns": 258000000000,
+      "capture_monotonic_ns": 75168828000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (317, 300, 355, 347) has IoU 0.73 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (330, 368, 378, 421) has IoU 0.70 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (171, 536, 228, 579) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (362, 288, 401, 326) has IoU 0.61 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (293, 581, 320, 613) has IoU 0.56 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (265, 406, 322, 461) has IoU 0.56 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (344, 531, 381, 579)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (168, 475, 227, 537)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (302, 165, 339, 199)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (340, 517, 379, 561) (confidence 0.52)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (385, 311, 410, 341) (confidence 0.44)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (343, 461, 379, 510) (confidence 0.42)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (337, 515, 390, 562) (confidence 0.33)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (347, 522, 372, 564) (confidence 0.31)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (376, 548, 395, 572) (confidence 0.30)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 8100,
+      "video_timestamp_ns": 270000000000,
+      "capture_monotonic_ns": 75181437000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (330, 565, 360, 624) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (440, 513, 470, 554) has IoU 0.59 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (339, 454, 368, 512)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (309, 304, 377, 366)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (360, 394, 410, 453) (confidence 0.67)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (437, 485, 459, 517) (confidence 0.51)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (379, 463, 406, 495) (confidence 0.44)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (348, 499, 371, 525) (confidence 0.41)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (342, 439, 372, 470) (confidence 0.39)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (327, 467, 356, 503) (confidence 0.34)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (436, 487, 463, 521) (confidence 0.32)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (333, 438, 370, 468) (confidence 0.30)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (315, 325, 367, 365) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (323, 459, 358, 502) (confidence 0.27)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (424, 512, 467, 555) (confidence 0.26)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (316, 469, 345, 500) (confidence 0.25)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (288, 482, 320, 516) (confidence 0.25)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 8460,
+      "video_timestamp_ns": 282000000000,
+      "capture_monotonic_ns": 75193875000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (437, 519, 473, 550) has IoU 0.69 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (145, 562, 210, 636) has IoU 0.68 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (346, 527, 372, 571) has IoU 0.64 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (437, 396, 478, 434) has IoU 0.62 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (417, 475, 460, 509) has IoU 0.55 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (396, 358, 449, 406)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (365, 390, 406, 424)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (327, 419, 361, 445)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (298, 275, 377, 344)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (371, 555, 392, 585)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (379, 515, 398, 539) (confidence 0.53)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (332, 407, 357, 441) (confidence 0.53)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (328, 520, 351, 553) (confidence 0.45)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (136, 543, 156, 565) (confidence 0.44)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (327, 519, 373, 567) (confidence 0.42)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (292, 258, 335, 305) (confidence 0.40)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (349, 480, 372, 508) (confidence 0.40)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (153, 521, 176, 550) (confidence 0.39)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (271, 561, 297, 600) (confidence 0.38)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (378, 381, 406, 418) (confidence 0.33)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (328, 520, 364, 555) (confidence 0.32)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched enemy_troop prediction at (412, 435, 438, 467) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (326, 524, 346, 551) (confidence 0.28)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (136, 543, 157, 573) (confidence 0.27)."
+        }
+      ]
+    },
+    {
+      "match_id": "match-dca5c5b70d4402d5",
+      "video_filename": "match05_redo.mp4",
+      "video_sha256": "dca5c5b70d4402d5e89070b9dc703b3568d3e3b3891a75851af0f2e626e4c2dd",
+      "frame_index": 8760,
+      "video_timestamp_ns": 292000000000,
+      "capture_monotonic_ns": 75204203000000,
+      "width": 512,
+      "height": 902,
+      "issues": [
+        {
+          "kind": "loose_box",
+          "message": "friendly_troop box at (430, 558, 471, 591) has IoU 0.65 with the prediction."
+        },
+        {
+          "kind": "loose_box",
+          "message": "enemy_troop box at (309, 372, 365, 437) has IoU 0.56 with the prediction."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (425, 523, 457, 557)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (396, 554, 433, 592)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (267, 373, 296, 407)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (250, 344, 278, 375)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (227, 369, 262, 397)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (121, 434, 169, 489)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled friendly_troop at (135, 469, 151, 490)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (398, 397, 439, 441)."
+        },
+        {
+          "kind": "missed",
+          "message": "No match for labelled enemy_troop at (406, 602, 444, 660)."
+        },
+        {
+          "kind": "extra",
+          "message": "Unmatched friendly_troop prediction at (228, 346, 300, 414) (confidence 0.60)."
+        }
+      ]
+    }
+  ],
+  "change_from_baseline": {
+    "baseline_weights": "C:\\Users\\unknown\\Documents\\Clash-Royale-Agent\\runs\\troops-v2\\weights\\best.pt",
+    "overall": {
+      "precision": 0.010649,
+      "recall": 0.032309,
+      "mAP50": 0.084817,
+      "mAP50-95": 0.046061,
+      "mAP75": 0.024643
+    },
+    "per_class": {
+      "friendly_troop": {
+        "precision": -0.077767,
+        "recall": 0.107784,
+        "mAP50": 0.115628,
+        "mAP50-95": 0.059963,
+        "mAP75": 0.043074
+      },
+      "enemy_troop": {
+        "precision": 0.099065,
+        "recall": -0.043165,
+        "mAP50": 0.054007,
+        "mAP50-95": 0.032159,
+        "mAP75": 0.006212
+      }
+    },
+    "per_class_at_review_confidence": {
+      "friendly_troop": {
+        "precision": -0.121168,
+        "recall": 0.185629
+      },
+      "enemy_troop": {
+        "precision": 0.031855,
+        "recall": 0.028777
+      }
+    }
+  }
+}
